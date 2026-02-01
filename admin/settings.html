@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Site Settings</h2>
+
+        <div class="form-card">
+            <h3>School Information</h3>
+            <form id="settingsForm">
+                <div class="settings-grid">
+                    <div>
+                        <label>School Name</label>
+                        <input type="text" name="school_name" value="St. John Paul II Vocational & High School">
+                    </div>
+                    <div>
+                        <label>Tagline</label>
+                        <input type="text" name="tagline" value="Your Success Begins Here">
+                    </div>
+                    <div>
+                        <label>Phone Number 1</label>
+                        <input type="text" name="phone1" value="0784 824 441">
+                    </div>
+                    <div>
+                        <label>Phone Number 2</label>
+                        <input type="text" name="phone2" value="0777 609 907">
+                    </div>
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" name="email" value="stjohnpaulvoc@gmail.com">
+                    </div>
+                    <div>
+                        <label>Location</label>
+                        <input type="text" name="location"
+                            value="1.5km off Mukono-Mbalala along the Kampala-Jinja Highway">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Settings</button>
+            </form>
+        </div>
+
+        <div class="form-card">
+            <h3>Social Media Links</h3>
+            <form id="socialForm">
+                <div class="settings-grid">
+                    <div>
+                        <label><i class="fab fa-facebook"></i> Facebook URL</label>
+                        <input type="text" name="facebook_url" placeholder="https://facebook.com/...">
+                    </div>
+                    <div>
+                        <label><i class="fab fa-youtube"></i> YouTube URL</label>
+                        <input type="text" name="youtube_url" placeholder="https://youtube.com/...">
+                    </div>
+                    <div>
+                        <label><i class="fab fa-twitter"></i> Twitter URL</label>
+                        <input type="text" name="twitter_url" placeholder="https://twitter.com/...">
+                    </div>
+                    <div>
+                        <label><i class="fab fa-instagram"></i> Instagram URL</label>
+                        <input type="text" name="instagram_url" placeholder="https://instagram.com/...">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Social Links</button>
+            </form>
+        </div>
+        <div class="form-card">
+            <h3>Home Page Media</h3>
+            <form id="mediaForm">
+                <div class="settings-grid">
+                    <div>
+                        <label><i class="fab fa-youtube"></i> Video URL (YouTube/Vimeo)</label>
+                        <input type="text" id="videoUrlInput" name="home_video_url"
+                            placeholder="https://youtube.com/embed/...">
+                        <small style="color: #666;" id="videoFormatHint">Paste the YouTube link; we'll handle the rest!
+                            Embed URLs work best.</small>
+                    </div>
+                    <div>
+                        <label><i class="fas fa-file-video"></i> OR Upload Video (MP4)</label>
+                        <input type="file" name="home_video_file" accept="video/mp4,video/webm">
+                        <small style="color: #666;">Max size 50MB. Uploads will override the URL.</small>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;" id="videoPreview">
+                    <p><strong>Current Video:</strong> <span id="currentVideoStatus">None</span></p>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Media Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        // Load settings
+        async function loadSettings() {
+            try {
+                const res = await fetch(`${API_URL}/content/settings`);
+                const settings = await res.json();
+
+                Object.keys(settings).forEach(key => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) input.value = settings[key];
+                });
+
+                // Update Video Status
+                const statusSpan = document.getElementById('currentVideoStatus');
+                if (settings.home_video_path) {
+                    statusSpan.innerHTML = `<span style="color: green;">Uploaded File Active</span> (<a href="${settings.home_video_path}" target="_blank">View</a>)`;
+                } else if (settings.home_video_url) {
+                    statusSpan.innerHTML = `<span style="color: blue;">External Link Active</span> (${settings.home_video_url})`;
+                } else {
+                    statusSpan.innerHTML = '<span style="color: gray;">None</span>';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const settings = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/content/settings`, {
+                    method: 'POST', headers, body: JSON.stringify({ settings })
+                });
+                if (res.ok) alert('Settings saved!');
+            } catch (e) { console.error(e); }
+        });
+
+        document.getElementById('socialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const settings = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/content/settings`, {
+                    method: 'POST', headers, body: JSON.stringify({ settings })
+                });
+                if (res.ok) alert('Social links saved!');
+            } catch (e) { console.error(e); }
+        });
+
+        document.getElementById('mediaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const res = await fetch(`${API_URL}/content/settings`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                if (res.ok) {
+                    alert('Media settings saved!');
+                    loadSettings();
+                } else {
+                    alert('Failed to save media.');
+                }
+            } catch (e) { console.error(e); }
+        });
+
+        // URL Auto-converter Helper
+        function getEmbedUrl(url) {
+            if (!url) return '';
+
+            // YouTube
+            if (url.includes('youtube.com/watch?v=')) {
+                return url.replace('watch?v=', 'embed/').split('&')[0];
+            }
+            if (url.includes('youtu.be/')) {
+                const id = url.split('youtu.be/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${id}`;
+            }
+
+            // Vimeo
+            if (url.includes('vimeo.com/') && !url.includes('player.vimeo.com')) {
+                const id = url.split('vimeo.com/')[1].split('?')[0];
+                return `https://player.vimeo.com/video/${id}`;
+            }
+
+            return url;
+        }
+
+        document.getElementById('videoUrlInput').addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            if (val && !val.includes('embed') && !val.includes('player.vimeo')) {
+                const converted = getEmbedUrl(val);
+                if (converted !== val) {
+                    e.target.value = converted;
+                    document.getElementById('videoFormatHint').innerHTML = '<span style="color: green;"><i class="fas fa-check-circle"></i> Automatically converted to Embed format!</span>';
+                }
+            }
+        });
+
+        loadSettings();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

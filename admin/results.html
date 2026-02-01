@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Marks | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class="active"><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Enter Exam Marks</h2>
+
+        <div class="form-card">
+            <form id="marksForm">
+                <div class="grid-2">
+                    <div>
+                        <label>Student</label>
+                        <select id="studentSelect" name="student_id" required>
+                            <option value="">Select Student...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Subject</label>
+                        <select id="subjectSelect" name="subject_id" required>
+                            <option value="">Select Subject...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <label>Term</label>
+                        <select name="term">
+                            <option value="Term 1">Term 1</option>
+                            <option value="Term 2">Term 2</option>
+                            <option value="Term 3">Term 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Year</label>
+                        <input type="number" name="year" value="2026" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Score (%)</label>
+                    <input type="number" name="score" min="0" max="100" required placeholder="e.g. 85">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Mark</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        async function loadDropdowns() {
+            try {
+                // Students
+                const resStudents = await fetch(`${API_URL}/students`, { headers });
+                const students = await resStudents.json();
+                const sSelect = document.getElementById('studentSelect');
+                students.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = `${s.full_name} (${s.reg_number})`;
+                    sSelect.appendChild(opt);
+                });
+
+                // Subjects - Hardcoded comprehensive list
+                const subSelect = document.getElementById('subjectSelect');
+
+                // O-Level Subjects
+                const oLevelGroup = document.createElement('optgroup');
+                oLevelGroup.label = 'O-Level Subjects';
+                ['Mathematics', 'English Language', 'Physics', 'Chemistry', 'Biology', 'History', 'Geography',
+                    'CRE (Christian Religious Education)', 'IRE (Islamic Religious Education)', 'Commerce',
+                    'Entrepreneurship', 'Agriculture', 'Computer Studies', 'French', 'Luganda', 'Literature',
+                    'Fine Art', 'Music', 'Physical Education'].forEach(name => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        oLevelGroup.appendChild(opt);
+                    });
+                subSelect.appendChild(oLevelGroup);
+
+                // A-Level Subjects
+                const aLevelGroup = document.createElement('optgroup');
+                aLevelGroup.label = 'A-Level Subjects';
+                ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'Economics', 'Geography', 'History',
+                    'Literature', 'Divinity', 'Entrepreneurship', 'ICT (Information and Communication Technology)',
+                    'Fine Art', 'Agriculture', 'French', 'Luganda', 'General Paper', 'Subsidiary Mathematics'].forEach(name => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        aLevelGroup.appendChild(opt);
+                    });
+                subSelect.appendChild(aLevelGroup);
+
+                // Vocational Subjects
+                const vocationalGroup = document.createElement('optgroup');
+                vocationalGroup.label = 'Vocational/Technical Subjects';
+                ['Carpentry & Joinery', 'Plumbing', 'Electrical Installation', 'Motor Vehicle Mechanics',
+                    'Welding & Metal Fabrication', 'Tailoring & Fashion Design', 'Hairdressing & Beauty Therapy',
+                    'Cookery & Food Production', 'Building Construction', 'Computer Applications', 'Accounting',
+                    'Secretarial Studies', 'Information Technology'].forEach(name => {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        vocationalGroup.appendChild(opt);
+                    });
+                subSelect.appendChild(vocationalGroup);
+
+            } catch (error) { console.error(error); }
+        }
+
+        document.getElementById('marksForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/marks/enter`, {
+                    method: 'POST',
+                    headers: { ...headers, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('Marks Saved Successfully!');
+                    e.target.reset();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to save marks');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error submitting marks');
+            }
+        });
+
+        loadDropdowns();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

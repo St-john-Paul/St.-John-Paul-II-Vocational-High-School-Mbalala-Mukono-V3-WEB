@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication Center | Admin Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        .comm-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .comm-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #f0f0f0;
+        }
+
+        .comm-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .comm-header h3 {
+            margin: 0;
+            color: #8B0000;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .channel-select {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .channel-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .channel-option i {
+            font-size: 1.4rem;
+        }
+
+        .channel-option.active {
+            border-color: #25D366;
+            background: #f0fdf4;
+            color: #14532d;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.1);
+        }
+
+        .channel-option.sms.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #1e3a8a;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #8B0000;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+        }
+
+        .history-list {
+            max-height: 600px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg-item {
+            padding: 18px;
+            border-radius: 10px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+            transition: transform 0.2s;
+        }
+
+        .msg-item:hover {
+            transform: translateX(5px);
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .msg-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .msg-whatsapp {
+            background: #25D366;
+        }
+
+        .msg-sms {
+            background: #3b82f6;
+        }
+
+        .msg-content {
+            flex-grow: 1;
+        }
+
+        .msg-content h4 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .msg-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .msg-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .msg-time {
+            color: #999;
+        }
+
+        .msg-status {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #8B0000;
+            color: #8B0000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline:hover {
+            background: #8B0000;
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class="active"><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <header class="admin-header"
+            style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="header-title">
+                <h1 style="margin: 0; color: #8B0000; font-size: 1.8rem;">Communication Center</h1>
+                <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">Send Broadcasts & View Message History</p>
+            </div>
+            <div class="simulator-badge">
+                <i class="fas fa-flask"></i> Simulator Mode Active
+            </div>
+        </header>
+
+        <div class="comm-grid">
+            <!-- Send Message -->
+            <div class="comm-card">
+                <div class="comm-header">
+                    <i class="fas fa-paper-plane" style="font-size: 1.5rem; color: #8B0000;"></i>
+                    <h3>Compose Message</h3>
+                </div>
+
+                <div class="channel-select">
+                    <div class="channel-option active" onclick="setChannel('WhatsApp', this)">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </div>
+                    <div class="channel-option sms" onclick="setChannel('SMS', this)">
+                        <i class="fas fa-sms"></i> SMS
+                    </div>
+                </div>
+
+                <form id="msgForm">
+                    <div class="form-group">
+                        <label>Recipient Type</label>
+                        <select id="recipientType" class="form-control" onchange="toggleRecipientInput()">
+                            <option value="single">Single Parent</option>
+                            <option value="class">Whole Class (Broadcast)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="singleInput">
+                        <label>Phone Number</label>
+                        <input type="text" id="phone" class="form-control" placeholder="+256 7...">
+                    </div>
+
+                    <div id="classInput" style="display: none;" class="form-group">
+                        <label>Select Class</label>
+                        <select id="classSelect" class="form-control">
+                            <option value="S.4">Senior Four (S.4)</option>
+                            <option value="S.6">Senior Six (S.6)</option>
+                            <option value="S.1">Senior One (S.1)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="message" rows="4" class="form-control"
+                            placeholder="Type your message here..."></textarea>
+                        <small style="color: #999;">Use {name} to insert student name dynamically.</small>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; background: #8B0000; color: white;">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+
+            <!-- History -->
+            <div class="comm-card">
+                <div class="comm-header">
+                    <i class="fas fa-history" style="font-size: 1.5rem; color: #666;"></i>
+                    <h3>Message Log</h3>
+                    <button class="btn-outline" onclick="loadHistory()" style="margin-left: auto;">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="history-list" id="historyList">
+                    <div style="text-align: center; color: #999; padding: 20px;">No messages sent yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        let currentChannel = 'WhatsApp';
+
+        window.setChannel = (channel, el) => {
+            currentChannel = channel;
+            document.querySelectorAll('.channel-option').forEach(c => {
+                c.classList.remove('active');
+                c.style.borderColor = '#ddd';
+                c.style.background = 'white';
+                c.style.color = '#666';
+            });
+            el.classList.add('active');
+            if (channel === 'WhatsApp') {
+                el.style.borderColor = '#25D366';
+                el.style.background = '#f0fdf4';
+                el.style.color = '#14532d';
+            } else {
+                el.style.borderColor = '#3b82f6';
+                el.style.background = '#eff6ff';
+                el.style.color = '#1e3a8a';
+            }
+        };
+
+        window.toggleRecipientInput = () => {
+            const type = document.getElementById('recipientType').value;
+            document.getElementById('singleInput').style.display = type === 'single' ? 'block' : 'none';
+            document.getElementById('classInput').style.display = type === 'class' ? 'block' : 'none';
+        };
+
+        // Send Logic
+        document.getElementById('msgForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            try {
+                const type = document.getElementById('recipientType').value;
+                const message = document.getElementById('message').value;
+                let url = type === 'single' ? '/api/communication/send' : '/api/communication/broadcast';
+
+                const body = {
+                    message,
+                    type: currentChannel
+                };
+
+                if (type === 'single') {
+                    body.recipient_phone = document.getElementById('phone').value;
+                } else {
+                    body.class_level = document.getElementById('classSelect').value;
+                }
+
+                const res = await fetch(`${API_URL.replace('/api', '')}${url}`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(data.message);
+                    document.getElementById('msgForm').reset();
+                    loadHistory();
+                } else {
+                    alert('Failed to send message');
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Connection Error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Load History
+        window.loadHistory = async () => {
+            try {
+                const res = await fetch(`${API_URL}/communication/history`, { headers });
+                const logs = await res.json();
+                const list = document.getElementById('historyList');
+
+                if (logs.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No messages yet.</div>';
+                    return;
+                }
+
+                list.innerHTML = logs.map(msg => `
+                    <div class="msg-item">
+                        <div class="msg-icon ${msg.type === 'WhatsApp' ? 'msg-whatsapp' : 'msg-sms'}">
+                            <i class="fab ${msg.type === 'WhatsApp' ? 'fa-whatsapp' : 'fa-comment-alt'}"></i>
+                        </div>
+                        <div class="msg-content">
+                            <h4>${msg.recipient}</h4>
+                            <p>${msg.message}</p>
+                            <div class="msg-meta">
+                                <div class="msg-time"><i class="far fa-clock"></i> ${new Date(msg.timestamp).toLocaleString()}</div>
+                                <div class="msg-status" style="color: ${msg.type === 'WhatsApp' ? '#25D366' : '#3b82f6'};">
+                                    <i class="fas fa-check-double"></i> SENT
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadHistory();
+    </script>
+</body>
+
+</html>

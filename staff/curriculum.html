@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum | Staff Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/staff.css">
+    <style>
+        :root {
+            --school-red: #8B0000;
+            --school-orange: #FFA500;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            padding-top: 0;
+            display: flex;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            width: auto;
+            overflow-x: hidden;
+        }
+
+        /* Responsive Sidebar */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1000;
+                width: 250px;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 70px;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--school-red);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .curriculum-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-top: 4px solid var(--school-red);
+        }
+
+        .curriculum-section h3 {
+            color: var(--school-red);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .subject-card strong {
+            display: block;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subject-code {
+            font-size: 0.85rem;
+            color: #666;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-core {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body class="staff-page">
+    <!-- Mobile Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Staff Portal</h3>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/staff/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/staff/marks.html"><i class="fas fa-edit"></i> Enter Marks</a>
+            <a href="/staff/my-classes.html"><i class="fas fa-users"></i> My Classes</a>
+
+            <div class="sidebar-label">Academics</div>
+            <a href="/staff/timetable.html"><i class="fas fa-calendar-alt"></i> Timetable</a>
+            <a href="/staff/curriculum.html" class="active"><i class="fas fa-book-open"></i> Curriculum</a>
+
+            <div class="sidebar-label">Account</div>
+            <a href="/staff/settings.html"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/index.html"><i class="fas fa-arrow-left"></i> Back to System</a>
+            <a href="/staff/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 25px; color: var(--school-red);">School Curriculum</h2>
+
+        <!-- O-Level -->
+        <div class="curriculum-section">
+            <h3><i class="fas fa-book me-2"></i> O-Level Subjects</h3>
+            <div class="subject-grid" id="olevelGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- A-Level -->
+        <div class="curriculum-section" style="border-top-color: var(--school-orange);">
+            <h3><i class="fas fa-graduation-cap me-2"></i> A-Level Subjects</h3>
+            <div class="subject-grid" id="alevelGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- Vocational -->
+        <div class="curriculum-section" style="border-top-color: #28a745;">
+            <h3><i class="fas fa-tools me-2"></i> Vocational Courses</h3>
+            <div class="subject-grid" id="vocationalGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { logout, getCurrentUser } from '/src/utils/auth.js';
+
+        // Mobile Sidebar Toggle
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (overlay) overlay.classList.toggle('active');
+        };
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'staff') {
+            window.location.href = '/login.html';
+        }
+
+        async function loadSubjects() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/academics/subjects`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const subjects = await res.json();
+
+                const olevel = subjects.filter(s => !s.category || s.category === 'O-Level');
+                const alevel = subjects.filter(s => s.category === 'A-Level');
+                const vocational = subjects.filter(s => s.category === 'Vocational');
+
+                renderCategory('olevelGrid', olevel);
+                renderCategory('alevelGrid', alevel);
+                renderCategory('vocationalGrid', vocational);
+
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+            }
+        }
+
+        function renderCategory(elementId, list) {
+            const container = document.getElementById(elementId);
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-muted">No subjects found.</p>';
+                return;
+            }
+
+            container.innerHTML = list.map(s => `
+                <div class="subject-card">
+                    <strong>${s.name} ${s.is_core ? '<span class="badge-core">Core</span>' : ''}</strong>
+                    <span class="subject-code">${s.code}</span>
+                </div>
+            `).join('');
+        }
+
+        loadSubjects();
+    </script>
+</body>
+
+</html>

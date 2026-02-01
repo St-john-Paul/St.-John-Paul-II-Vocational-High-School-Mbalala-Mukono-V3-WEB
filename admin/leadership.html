@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Leadership | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .member-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .member-card .info {
+            padding: 15px;
+        }
+
+        .member-card h4 {
+            margin: 0 0 5px;
+        }
+
+        .member-card p {
+            color: #666;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .member-card .actions {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 10px;
+        }
+
+        .member-card .actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* Modal Centering Overrides */
+        #editMemberModal {
+            align-items: center;
+            justify-content: center;
+        }
+
+        #editMemberModal .modal-content {
+            margin: 0;
+            /* Remove default margin for flex centering */
+            max-height: 90vh;
+            /* Prevent overflow on small screens */
+            overflow-y: auto;
+            width: 90%;
+            max-width: 600px;
+            /* Match finance card width */
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class="active"><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Leadership Management</h2>
+
+        <div class="form-card">
+            <h3>Add New Member</h3>
+            <form id="addMemberForm">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Full Name</label>
+                        <input type="text" name="name" required placeholder="Hon. John Doe">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Title/Position</label>
+                        <input type="text" name="title" required placeholder="Chairman, Board of Governors">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Category</label>
+                        <select name="category">
+                            <option value="board">Board of Governors</option>
+                            <option value="management">School Management</option>
+                            <option value="teaching">Teaching Staff</option>
+                            <option value="support">Support Staff</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Photo</label>
+                        <input type="file" name="photo" accept="image/*">
+                        <div style="text-align: center; margin: 5px 0;">- OR -</div>
+                        <input type="url" name="photo_url_input" placeholder="Paste image link here (https://...)">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>CV File</label>
+                        <input type="file" name="cv" accept=".pdf,.doc,.docx">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>LinkedIn URL</label>
+                        <input type="text" name="linkedin" placeholder="https://linkedin.com/in/...">
+                    </div>
+                </div>
+                <div>
+                    <label>Bio</label>
+                    <textarea name="bio" rows="3" placeholder="Brief biography..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Member</button>
+            </form>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-category="board">Board of Governors</div>
+            <div class="tab" data-category="management">School Management</div>
+            <div class="tab" data-category="teaching">Teaching Staff</div>
+            <div class="tab" data-category="support">Support Staff</div>
+        </div>
+
+        <div id="membersList" class="members-grid">
+            Loading...
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div id="editMemberModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h3
+                style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--color-primary);">
+                Edit Member Details</h3>
+            <form id="editMemberForm">
+                <input type="hidden" name="id" id="editMemberId">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Full Name</label>
+                        <input type="text" name="name" id="editName" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Title/Position</label>
+                        <input type="text" name="title" id="editTitle" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Category</label>
+                        <select name="category" id="editCategory">
+                            <option value="board">Board of Governors</option>
+                            <option value="management">School Management</option>
+                            <option value="teaching">Teaching Staff</option>
+                            <option value="support">Support Staff</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Photo (Leave blank to keep current)</label>
+                        <input type="file" name="photo" accept="image/*">
+                        <div style="text-align: center; margin: 5px 0;">- OR -</div>
+                        <input type="url" name="photo_url_input" id="editPhotoUrl"
+                            placeholder="Paste image link here (https://...)">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>CV File (Leave blank to keep current)</label>
+                        <input type="file" name="cv" accept=".pdf,.doc,.docx">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>LinkedIn URL</label>
+                        <input type="text" name="linkedin" id="editLinkedin">
+                    </div>
+                </div>
+                <div>
+                    <label>Bio</label>
+                    <textarea name="bio" id="editBio" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Update
+                    Member</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { optimizeImage } from '/src/utils/imageOptimizer.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        // Headers for GET/DELETE/PUT (JSON/Auth) - POST will use FormData (no Content-Type)
+        const headers = { 'Authorization': `Bearer ${token}` };
+        let currentCategory = 'board';
+
+        async function loadMembers() {
+            try {
+                const res = await fetch(`${API_URL}/content/leadership?category=${currentCategory}`, { headers });
+                const members = await res.json();
+                const container = document.getElementById('membersList');
+                container.innerHTML = '';
+
+                if (members.length === 0) {
+                    container.innerHTML = '<p>No members found in this category.</p>';
+                    return;
+                }
+
+                members.forEach(m => {
+                    // Store member data in a global map or property for easy access
+                    if (!window.membersData) window.membersData = {};
+                    window.membersData[m.id] = m;
+
+                    container.innerHTML += `
+                        <div class="member-card">
+                            <img src="${getImageUrl(m.photo_url) || '/hero-main.png'}" alt="${m.name}">
+                            <div class="info">
+                                <h4>${m.name}</h4>
+                                <p>${m.title}</p>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-edit" onclick="openEditModal(${m.id})"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn-delete" onclick="deleteMember(${m.id})"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+                const container = document.getElementById('membersList');
+                if (container) container.innerHTML = '<p>Error loading members.</p>';
+            }
+        }
+
+        window.deleteMember = async (id) => {
+            if (!confirm('Delete this member?')) return;
+            try {
+                const res = await fetch(`${API_URL}/content/leadership/${id}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (res.ok) loadMembers();
+            } catch (e) { console.error(e); }
+        };
+
+        window.openEditModal = (id) => {
+            const member = window.membersData[id];
+            if (!member) return;
+
+            document.getElementById('editMemberId').value = member.id;
+            document.getElementById('editName').value = member.name;
+            document.getElementById('editTitle').value = member.title;
+            document.getElementById('editCategory').value = member.category;
+            document.getElementById('editLinkedin').value = member.linkedin || '';
+            document.getElementById('editBio').value = member.bio || '';
+            document.getElementById('editPhotoUrl').value = '';
+
+            // Reset file inputs
+            document.querySelector('#editMemberForm input[name="photo"]').value = '';
+            document.querySelector('#editMemberForm input[name="cv"]').value = '';
+
+            document.getElementById('editMemberModal').style.display = 'flex';
+        };
+
+        window.closeEditModal = () => {
+            document.getElementById('editMemberModal').style.display = 'none';
+        };
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('editMemberModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.getElementById('editMemberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editMemberId').value;
+            const formData = new FormData(e.target);
+
+            // OPTIMIZE PHOTO
+            const photoInput = e.target.querySelector('input[name="photo"]');
+            if (photoInput && photoInput.files.length > 0) {
+                try {
+                    const optimized = await optimizeImage(photoInput.files[0]);
+                    formData.set('photo', optimized);
+                } catch (err) { console.warn('Photo optimization failed'); }
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/content/leadership/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }, // No Content-Type for FormData
+                    body: formData
+                });
+                if (res.ok) {
+                    alert('Member updated successfully!');
+                    closeEditModal();
+                    loadMembers();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to update');
+                }
+            } catch (e) { console.error(e); alert('Error updating member'); }
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                loadMembers();
+            });
+        });
+
+        document.getElementById('addMemberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            // OPTIMIZE PHOTO
+            const photoInput = e.target.querySelector('input[name="photo"]');
+            const urlInput = e.target.querySelector('input[name="photo_url_input"]');
+
+            if (photoInput && photoInput.files.length > 0) {
+                try {
+                    const optimized = await optimizeImage(photoInput.files[0]);
+                    formData.set('photo', optimized);
+                } catch (err) { console.warn('Photo optimization failed'); }
+            } else if (urlInput && urlInput.value) {
+                formData.set('photo_url_input', urlInput.value);
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/content/leadership`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }, // No Content-Type (browser sets multipart/form-data)
+                    body: formData
+                });
+                if (res.ok) {
+                    alert('Member added!');
+                    e.target.reset();
+                    loadMembers();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to add');
+                }
+            } catch (e) { console.error(e); alert('Error adding member'); }
+        });
+
+        loadMembers();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

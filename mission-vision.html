@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission & Vision | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-mission_hero">
+            <div class="container">
+                <h1 data-field="title">Our Purpose & Values</h1>
+                <p data-field="subtitle">YOUR SUCCESS BEGINS HERE</p>
+            </div>
+        </section>
+
+        <section class="mission-vision-details" style="padding: 80px 0;">
+            <div class="container">
+                <!-- Goal, Mission, Vision -->
+                <div class="purpose-grid">
+                    <div class="purpose-box goal-box">
+                        <h2 style="margin-bottom: 25px;">Our Goal</h2>
+                        <p style="color: var(--gray-600); line-height: 1.8; font-size: 1.1rem;">"To equip our
+                            students
+                            with knowledge and practical skills to enable them become productive, creative,
+                            responsible,
+                            ethical to thrive and succeed in life."</p>
+                    </div>
+                    <div class="purpose-box mission-box">
+                        <h2 style="margin-bottom: 25px;">Our Mission</h2>
+                        <p style="color: var(--gray-600); line-height: 1.8; font-size: 1.1rem;">"To provide quality
+                            education that is holistic, practical and accessible, aimed at nurturing graduates who
+                            are
+                            God-fearing, innovators and productive citizens of the global community."</p>
+                    </div>
+                    <div class="purpose-box vision-box">
+                        <h2 style="margin-bottom: 25px;">Our Vision</h2>
+                        <p style="color: var(--gray-600); line-height: 1.8; font-size: 1.1rem;">"A leading centre of
+                            excellence in academic and vocational education, transforming lives through skills and
+                            character development."</p>
+                    </div>
+                </div>
+
+                <!-- Core Values -->
+                <div class="core-values" style="margin-top: 80px; text-align: center;">
+                    <h2 style="margin-bottom: 20px;">Our Core Values</h2>
+                    <div style="width: 80px; height: 4px; background: var(--color-accent); margin: 0 auto 50px;">
+                    </div>
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <i class="fas fa-user-shield"></i>
+                            <h4>Integrity</h4>
+                            <p style="font-size: 0.9rem;">Honesty and responsibility in all actions.</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-book-reader"></i>
+                            <h4>Discipline</h4>
+                            <p style="font-size: 0.9rem;">The foundation of success and character.</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-cross"></i>
+                            <h4>God Fearing</h4>
+                            <p style="font-size: 0.9rem;">Remaining true to our spiritual foundation.</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-users"></i>
+                            <h4>Team Work</h4>
+                            <p style="font-size: 0.9rem;">Collaborating for greater achievements.</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-award"></i>
+                            <h4>Excellence</h4>
+                            <p style="font-size: 0.9rem;">Striving for the best in every field.</p>
+                        </div>
+                        <div class="value-item">
+                            <i class="fas fa-check-double"></i>
+                            <h4>Accountability</h4>
+                            <p style="font-size: 0.9rem;">Taking ownership of our responsibilities.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objectives -->
+                <div class="objectives-section">
+                    <div style="text-align: center; margin-bottom: 40px;">
+                        <h2>Our Objectives</h2>
+                        <div style="width: 80px; height: 4px; background: var(--color-primary); margin: 20px auto;">
+                        </div>
+                    </div>
+                    <div class="objectives-list">
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To provide high-quality education which is affordable to all Ugandans.</p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To provide a suitable and conducive environment for learning.</p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To provide learners with leadership skills.</p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To tap and nurture talents.</p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To provide students with Vocational Skills.</p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To instill a sense of self-discipline, responsibility, and harmonious co-existence.
+                            </p>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-check-circle"></i>
+                            <p>To produce morally upright God-fearing citizens.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum | Student Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        :root {
+            --school-red: #8B0000;
+            --school-orange: #FFA500;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            padding-top: 90px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .curriculum-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-top: 4px solid var(--school-red);
+        }
+
+        .curriculum-section h3 {
+            color: var(--school-red);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .subject-card strong {
+            display: block;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subject-code {
+            font-size: 0.85rem;
+            color: #666;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-core {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar scrolled">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <img src="/logo.png" alt="St. John Paul II" style="height: 50px;">
+                <span style="margin-left: 10px; font-weight: 700;">Student Portal</span>
+            </a>
+            <div class="nav-links">
+                <a href="/student/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/student/curriculum.html" class="active"><i class="fas fa-book"></i> Curriculum</a>
+                <a href="/student/logout.html" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="margin-bottom: 20px;">
+            <a href="/student/dashboard.html" class="btn btn-outline-primary"
+                style="text-decoration: none; color: #8B0000; border-color: #8B0000;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <h2 style="margin-bottom: 25px; color: var(--school-red);">School Curriculum</h2>
+
+        <!-- O-Level -->
+        <div class="curriculum-section">
+            <h3><i class="fas fa-book me-2"></i> O-Level Subjects</h3>
+            <div class="subject-grid" id="olevelGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- A-Level -->
+        <div class="curriculum-section" style="border-top-color: var(--school-orange);">
+            <h3><i class="fas fa-graduation-cap me-2"></i> A-Level Subjects</h3>
+            <div class="subject-grid" id="alevelGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <!-- Vocational -->
+        <div class="curriculum-section" style="border-top-color: #28a745;">
+            <h3><i class="fas fa-tools me-2"></i> Vocational Courses</h3>
+            <div class="subject-grid" id="vocationalGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'student') {
+            window.location.href = '/login.html';
+        }
+
+        async function loadSubjects() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/academics/subjects`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const subjects = await res.json();
+
+                const olevel = subjects.filter(s => !s.category || s.category === 'O-Level');
+                const alevel = subjects.filter(s => s.category === 'A-Level');
+                const vocational = subjects.filter(s => s.category === 'Vocational');
+
+                renderCategory('olevelGrid', olevel);
+                renderCategory('alevelGrid', alevel);
+                renderCategory('vocationalGrid', vocational);
+
+            } catch (error) {
+                console.error('Error loading subjects:', error);
+            }
+        }
+
+        function renderCategory(elementId, list) {
+            const container = document.getElementById(elementId);
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-muted">No subjects found.</p>';
+                return;
+            }
+
+            container.innerHTML = list.map(s => `
+                <div class="subject-card">
+                    <strong>${s.name} ${s.is_core ? '<span class="badge-core">Core</span>' : ''}</strong>
+                    <span class="subject-code">${s.code}</span>
+                </div>
+            `).join('');
+        }
+
+        loadSubjects();
+    </script>
+</body>
+
+</html>

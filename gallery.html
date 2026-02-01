@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore our photo gallery. See life at St. John Paul II Vocational & High School through pictures of our campus, events, and student activities.">
+    <title>Gallery | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .gallery-filters button.active-filter {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-gallery_hero">
+            <div class="container">
+                <h1 data-field="title">Campus Gallery</h1>
+                <p data-field="subtitle">YOUR SUCCESS BEGINS HERE</p>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <section class="gallery-section" style="padding: 80px 0;">
+            <div class="container">
+                <div class="gallery-filters"
+                    style="display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary active-filter" data-category="All"
+                        style="padding: 8px 20px; font-size: 0.9rem;">All</button>
+                    <button class="btn btn-secondary" data-category="Campus"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Campus</button>
+                    <button class="btn btn-secondary" data-category="Academics"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Academics</button>
+                    <button class="btn btn-secondary" data-category="Sports"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Sports</button>
+                    <button class="btn btn-secondary" data-category="Events"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Events</button>
+                    <button class="btn btn-secondary" data-category="Computer Lab"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Computer Lab</button>
+                    <button class="btn btn-secondary" data-category="Vocational"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Vocational</button>
+                    <button class="btn btn-secondary" data-category="Transport"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Transport</button>
+                    <button class="btn btn-secondary" data-category="Dormitories"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Dormitories</button>
+                </div>
+
+                <div id="galleryGrid" class="gallery-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    <p style="text-align: center; grid-column: 1/-1;">Loading gallery...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImage">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('galleryGrid');
+            const filterBtns = document.querySelectorAll('.gallery-filters button');
+            const lightbox = document.getElementById('lightboxModal');
+            const lightboxImg = document.getElementById('lightboxImage');
+            const lightboxCaption = document.getElementById('lightboxCaption');
+            let currentCategory = 'All';
+
+            // Global functions for lightbox
+            window.openLightbox = (imgUrl, caption) => {
+                lightbox.style.display = "flex";
+                lightboxImg.src = imgUrl;
+                lightboxCaption.textContent = caption || '';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            };
+
+            window.closeLightbox = () => {
+                lightbox.style.display = "none";
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            };
+
+            // Close on click outside
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.style.display === "flex") {
+                    closeLightbox();
+                }
+            });
+
+            async function loadGallery(category) {
+                try {
+                    const url = category === 'All'
+                        ? `${API_URL}/content/gallery`
+                        : `${API_URL}/content/gallery?category=${category}`;
+
+                    const res = await fetch(url);
+                    const images = await res.json();
+                    grid.innerHTML = '';
+
+                    if (images.length === 0) {
+                        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No images found in this category.</p>';
+                        return;
+                    }
+
+                    images.forEach(img => {
+                        // Escape quotes for the onclick function
+                        const safeCaption = (img.caption || '').replace(/'/g, "\\'");
+                        const imgUrl = getImageUrl(img.image_url);
+
+                        grid.innerHTML += `
+                            <div class="gallery-item" onclick="openLightbox('${imgUrl}', '${safeCaption}')"
+                                style="border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); position: relative; cursor: pointer;">
+                                <img src="${imgUrl}" alt="${img.caption || 'Gallery Image'}"
+                                    style="width: 100%; height: 250px; object-fit: cover; transition: transform 0.5s ease;">
+                                <div class="overlay" 
+                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-search-plus" style="color: white; font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Add hover effect via JS since inline styles are tricky for pseudo-classes
+                    const items = document.querySelectorAll('.gallery-item');
+                    items.forEach(item => {
+                        item.addEventListener('mouseenter', () => {
+                            item.querySelector('img').style.transform = 'scale(1.05)';
+                            item.querySelector('.overlay').style.opacity = '1';
+                        });
+                        item.addEventListener('mouseleave', () => {
+                            item.querySelector('img').style.transform = 'scale(1)';
+                            item.querySelector('.overlay').style.opacity = '0';
+                        });
+                    });
+
+                } catch (e) {
+                    console.error('Error loading gallery:', e);
+                    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Error loading gallery.</p>';
+                }
+            }
+
+            // Filter button clicks
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active-filter'));
+                    btn.classList.add('active-filter');
+                    currentCategory = btn.dataset.category;
+                    loadGallery(currentCategory);
+                });
+            });
+
+            // Initial load
+            loadGallery('All');
+
+            // Load Page Section (Hero)
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Meet the dedicated teaching and support staff at St. John Paul II Vocational & High School. Our team is committed to academic and vocational excellence.">
+    <title>Our Staff | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-staff_hero">
+            <div class="container">
+                <h1 data-field="title">Meet Our Staff</h1>
+                <p data-field="subtitle">THE DEDICATED TEAM BEHIND OUR SUCCESS</p>
+            </div>
+        </section>
+
+        <!-- School Management -->
+        <section style="padding: 100px 0;">
+            <div class="container">
+                <div class="section-title" style="text-align: center; margin-bottom: 80px;">
+                    <h4
+                        style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">
+                        Visionary Leadership</h4>
+                    <h2>School Management</h2>
+                    <div style="width: 80px; height: 4px; background: var(--color-accent); margin: 20px auto;"></div>
+                </div>
+                <div class="grid-3-col" id="management-container">
+                    <p style="text-align: center; grid-column: 1/-1;">Loading Management Team...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academic Staff -->
+        <section style="padding: 100px 0; background: var(--gray-50);">
+            <div class="container">
+                <div class="section-title" style="text-align: center; margin-bottom: 80px;">
+                    <h4
+                        style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">
+                        Academic Excellence</h4>
+                    <h2>Teaching Staff</h2>
+                    <div style="width: 80px; height: 4px; background: var(--color-accent); margin: 20px auto;"></div>
+                </div>
+                <div class="grid-3-col" id="teaching-container">
+                    <p style="text-align: center; grid-column: 1/-1;">Loading Teaching Staff...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support Staff -->
+        <section style="padding: 100px 0;">
+            <div class="container">
+                <div class="section-title" style="text-align: center; margin-bottom: 80px;">
+                    <h4
+                        style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">
+                        Vital Operations</h4>
+                    <h2>Support Staff</h2>
+                    <div style="width: 80px; height: 4px; background: var(--color-accent); margin: 20px auto;"></div>
+                </div>
+                <div class="grid-3-col" id="support-container">
+                    <p style="text-align: center; grid-column: 1/-1;">Loading Support Staff...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Modal -->
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <img id="modalImg" src="" alt="Profile" class="modal-img">
+                    <div>
+                        <h2 id="modalName" style="margin: 0;"></h2>
+                        <p id="modalTitle" style="color: var(--color-primary); font-weight: 700; margin-top: 5px;"></p>
+                    </div>
+                </div>
+                <div class="cv-details">
+                    <h4>Professional Profile</h4>
+                    <p id="modalBio"></p>
+                    <div style="margin-top: 30px;" id="cvDownloadWrapper">
+                        <a href="#" id="modalDownload" class="btn btn-primary">Download Full CV</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { API_URL, getImageUrl } from '/src/config.js';
+
+            async function fetchStaff() {
+                try {
+                    const categories = ['management', 'teaching', 'support'];
+                    for (const cat of categories) {
+                        const res = await fetch(`${API_URL}/content/leadership?category=${cat}`);
+                        const members = await res.json();
+                        renderStaff(members, `${cat}-container`);
+                    }
+                } catch (error) {
+                    console.error('Error fetching staff:', error);
+                }
+            }
+
+            function renderStaff(members, containerId) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+
+                if (members.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; grid-column: 1/-1; color: var(--gray-500);">Members will appear here once added in the Admin Panel.</p>`;
+                    return;
+                }
+
+                members.forEach(m => {
+                    const photo = getImageUrl(m.photo_url);
+                    const bioSafe = m.bio ? m.bio.replace(/'/g, "\\'") : 'Dedicated staff member.';
+
+                    container.innerHTML += `
+                        <div class="management-card" style="margin-top: 50px;">
+                            <div class="card-image">
+                                <img src="${photo}" alt="${m.name}">
+                            </div>
+                            <h3>${m.name}</h3>
+                            <p class="management-title">${m.title}</p>
+                            <p style="font-size: 0.85rem; color: var(--gray-600); margin: 15px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                ${m.bio || 'Dedicated staff member committed to excellence.'}
+                            </p>
+                            <div class="cv-buttons">
+                                <button class="btn-cv btn-view-cv" onclick="window.openProfile('${m.name}', '${m.title}', '${photo}', '${bioSafe}', '${m.cv_url}')">View Profile</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            window.openProfile = (name, title, img, bio, cvUrl) => {
+                const modal = document.getElementById('profileModal');
+                document.getElementById('modalName').innerText = name;
+                document.getElementById('modalTitle').innerText = title;
+                document.getElementById('modalImg').src = img;
+                document.getElementById('modalBio').innerText = bio;
+
+                const dlWrapper = document.getElementById('cvDownloadWrapper');
+                const dlBtn = document.getElementById('modalDownload');
+
+                if (cvUrl && cvUrl !== 'null' && cvUrl !== 'undefined') {
+                    dlBtn.href = getImageUrl(cvUrl);
+                    dlWrapper.style.display = 'block';
+                } else {
+                    dlWrapper.style.display = 'none';
+                }
+
+                modal.style.display = "flex";
+            };
+
+            document.querySelector('.close-modal').onclick = () => {
+                document.getElementById('profileModal').style.display = "none";
+            };
+
+            window.onclick = (event) => {
+                const modal = document.getElementById('profileModal');
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+
+            fetchStaff();
+
+            // Load Dynamic Sections
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        </script>
+
+        <!-- CTA Section -->
+        <section style="padding: 80px 0; text-align: center;">
+            <div class="container">
+                <h2 style="margin-bottom: 25px;">Interested in joining our team?</h2>
+                <p
+                    style="color: var(--gray-600); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    We are always looking for passionate educators and professionals to join our community. Send your CV
+                    to careers@stjohnpaulvoc.sc.ug</p>
+                <a href="/contact.html" class="btn btn-primary">Contact HR Dept</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

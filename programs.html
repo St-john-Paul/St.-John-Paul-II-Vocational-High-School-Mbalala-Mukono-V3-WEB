@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore our academic and vocational programs. We offer O-Level, A-Level, and DIT certified technical courses in Building, Tailoring, Mechanics, and more.">
+    <title>Programs | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled">
+        <div class="container nav-content">
+            <a href="/" class="logo" style="text-decoration: none;">
+                <h2 style="color: var(--color-primary); margin: 0; font-size: 1.2rem;">St. John Paul II Vocational &
+                    High School</h2>
+            </a>
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/programs.html" class="active">Programs</a></li>
+                <li><a href="/admissions.html">Admissions</a></li>
+                <li class="dropdown">
+                    <a href="#">More ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/gallery.html">Gallery</a></li>
+                        <li><a href="/staff.html">Our Staff</a></li>
+                        <li><a href="/clubs.html">Clubs</a></li>
+                    </ul>
+                </li>
+                <li><a href="/contact.html" class="btn btn-primary">Apply Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-hero" id="section-programs_hero">
+            <div class="container">
+                <h1 data-field="title">Our Programs</h1>
+                <p data-field="subtitle">YOUR SUCCESS BEGINS HERE</p>
+            </div>
+        </section>
+
+        <!-- Program Tabs -->
+        <div class="program-tabs"
+            style="position: sticky; top: 70px; background: white; z-index: 100; padding: 15px 0; box-shadow: var(--shadow-sm); border-bottom: 1px solid var(--gray-100);">
+            <div class="container" style="display: flex; justify-content: center; gap: 20px;">
+                <a href="#vocational" class="btn btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">Vocational
+                    Courses</a>
+                <a href="#academic" class="btn btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">Academic
+                    Programs</a>
+            </div>
+        </div>
+
+        <!-- Vocational Courses -->
+        <section id="vocational" class="vocational-section">
+            <div class="container">
+                <div class="section-header" style="margin-bottom: 50px;">
+                    <h2>Vocational Training Courses</h2>
+                    <p style="color: var(--gray-500); max-width: 600px; margin-top: 10px;">Our vocational programs are
+                        DIT and UBTEB certified, focusing on 80% practical training and 20% theory.</p>
+                </div>
+
+                <div class="programs-inner-container">
+                    <div class="section-title" style="text-align: center; margin-bottom: 50px;">
+                        <h4
+                            style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">
+                            Hands-On Training</h4>
+                        <h2>Vocational Skills Courses</h2>
+                    </div>
+
+                    <div class="grid-3-col">
+                        <!-- Course 1 -->
+                        <div class="course-card"
+                            style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg); transition: transform 0.3s ease; border: 1px solid var(--gray-100);">
+                            <div class="course-icon"
+                                style="color: var(--color-primary); font-size: 3.5rem; margin-bottom: 20px;"><i
+                                    class="fas fa-trowel-bricks"></i></div>
+                            <h3 style="margin-bottom: 15px;">Building & Concrete Practice</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem; margin-bottom: 25px;">Master
+                                the art of modern construction, from foundation to finishing.</p>
+                            <a href="#" class="btn btn-outline">Explore Course</a>
+                        </div>
+                        <!-- Course 2 -->
+                        <div class="course-card"
+                            style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg); transition: transform 0.3s ease; border: 1px solid var(--gray-100);">
+                            <div class="course-icon"
+                                style="color: var(--color-primary); font-size: 3.5rem; margin-bottom: 20px;"><i
+                                    class="fas fa-plug-circle-bolt"></i></div>
+                            <h3 style="margin-bottom: 15px;">Electrical Installation</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem; margin-bottom: 25px;">Learn
+                                domestic and industrial wiring with practical safety standards.</p>
+                            <a href="#" class="btn btn-outline">Explore Course</a>
+                        </div>
+                        <!-- Course 3 -->
+                        <div class="course-card"
+                            style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: var(--shadow-lg); transition: transform 0.3s ease; border: 1px solid var(--gray-100);">
+                            <div class="course-icon"
+                                style="color: var(--color-primary); font-size: 3.5rem; margin-bottom: 20px;"><i
+                                    class="fas fa-utensils"></i></div>
+                            <h3 style="margin-bottom: 15px;">Catering & Hotel Management</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem; margin-bottom: 25px;">
+                                Professional culinary skills and hospitality industry management.</p>
+                            <a href="#" class="btn btn-outline">Explore Course</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="more-programs" style="margin-top: 40px;">
+                    <div class="grid-4-col">
+                        <!-- Course Card -->
+                        <div class="course-card-mini"
+                            style="background: var(--gray-50); padding: 30px; border-radius: 16px; border: 1px solid var(--gray-200);">
+                            <i class="fas fa-scissors"
+                                style="color: var(--color-primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                            <h4 style="margin-bottom: 10px;">Tailoring & Design</h4>
+                            <p style="font-size: 0.85rem; color: var(--gray-600);">Fashion design and garment
+                                construction.</p>
+                        </div>
+                        <div class="course-card-mini"
+                            style="background: var(--gray-50); padding: 30px; border-radius: 16px; border: 1px solid var(--gray-200);">
+                            <i class="fas fa-laptop-code"
+                                style="color: var(--color-primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                            <h4 style="margin-bottom: 10px;">ICT-Secretarial</h4>
+                            <p style="font-size: 0.85rem; color: var(--gray-600);">Computer applications and
+                                office administration.</p>
+                        </div>
+                        <div class="course-card-mini"
+                            style="background: var(--gray-50); padding: 30px; border-radius: 16px; border: 1px solid var(--gray-200);">
+                            <i class="fas fa-hammer"
+                                style="color: var(--color-primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                            <h4 style="margin-bottom: 10px;">Carpentry</h4>
+                            <p style="font-size: 0.85rem; color: var(--gray-600);">Woodwork design and furniture
+                                making.</p>
+                        </div>
+                        <div class="course-card-mini"
+                            style="background: var(--gray-50); padding: 30px; border-radius: 16px; border: 1px solid var(--gray-200);">
+                            <i class="fas fa-car"
+                                style="color: var(--color-primary); font-size: 2rem; margin-bottom: 15px;"></i>
+                            <h4 style="margin-bottom: 10px;">Motor Vehicle Mech.</h4>
+                            <p style="font-size: 0.85rem; color: var(--gray-600);">Automotive engineering and
+                                maintenance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academic Programs -->
+        <section id="academic" style="padding: 100px 0; background: var(--gray-50);">
+            <div class="container">
+                <div class="section-title" style="text-align: center; margin-bottom: 60px;">
+                    <h4
+                        style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">
+                        Academic Excellence</h4>
+                    <h2>Secondary Education (O & A Level)</h2>
+                </div>
+
+                <div class="grid-2-col">
+                    <div class="academic-card"
+                        style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--shadow-xl); border-left: 8px solid var(--color-primary);">
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">O-Level (S.1 - S.4)</h3>
+                        <p style="margin-bottom: 25px; color: var(--gray-600);">We offer a wide range of
+                            subjects following the National Curriculum, with a strong emphasis on both arts
+                            and sciences.</p>
+                        <ul style="display: grid; gap: 12px;">
+                            <li><i class="fas fa-check-circle" style="color: var(--color-primary);"></i>
+                                Comprehensive Science Labs</li>
+                            <li><i class="fas fa-check-circle" style="color: var(--color-primary);"></i> New
+                                Lower Secondary Curriculum</li>
+                            <li><i class="fas fa-check-circle" style="color: var(--color-primary);"></i>
+                                Integrated Vocational Learning</li>
+                        </ul>
+                    </div>
+                    <div class="academic-card"
+                        style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--shadow-xl); border-left: 8px solid var(--color-secondary);">
+                        <h3 style="font-size: 1.8rem; margin-bottom: 20px;">A-Level (S.5 - S.6)</h3>
+                        <p style="margin-bottom: 25px; color: var(--gray-600);">Preparing students for
+                            excellence in Higher Education with specialized subject combinations.</p>
+                        <ul style="display: grid; gap: 12px;">
+                            <li><i class="fas fa-check-circle" style="color: var(--color-secondary);"></i>
+                                Arts & Science Combinations</li>
+                            <li><i class="fas fa-check-circle" style="color: var(--color-secondary);"></i>
+                                Career Guidance & Counseling</li>
+                            <li><i class="fas fa-check-circle" style="color: var(--color-secondary);"></i>
+                                University Entry Preparation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+
+                            // Hero Background Logic
+                            if (s.section_key.endsWith('_hero') && s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

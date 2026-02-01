@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 20px;
+        }
+
+        .stat-info h3 {
+            margin: 0;
+            font-size: 2rem;
+            color: var(--gray-900);
+        }
+
+        .stat-info p {
+            margin: 0;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/videos.html" class=""><i class="fas fa-video"></i> Videos</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h2>Dashboard Overview</h2>
+                <p class="text-gray-500">Welcome back, <span id="adminName">Admin</span></p>
+            </div>
+            <div class="user-profile">
+                <!-- Profile Photo -->
+                <img src="/assets/avatars/admin-avatar.png"
+                    onerror="this.src='https://ui-avatars.com/api/?name=Admin&background=random'" alt="Profile"
+                    style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-accent);">
+
+                <div style="text-align: right;">
+                    <div id="roleBadge"
+                        style="font-size: 0.8rem; background: var(--color-accent); color: white; padding: 2px 8px; border-radius: 4px;">
+                        Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(0,0,255,0.1); color: var(--color-secondary);">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="studentCount">-</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(139,0,0,0.1); color: var(--color-primary);">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="staffCount">-</h3>
+                    <p>Total Staff</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(0,128,0,0.1); color: green;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="feeStats">-</h3>
+                    <p>Outstanding Fees</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+            <h4>Recent Activity</h4>
+            <p class="text-gray-500">No recent activity logged.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        import { logout, getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) {
+            window.location.href = '/login.html';
+        }
+
+        document.getElementById('adminName').textContent = user.username;
+        document.getElementById('roleBadge').textContent = user.role.toUpperCase();
+
+        // Fetch Stats
+        async function loadStats() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                document.getElementById('studentCount').textContent = data.students;
+                document.getElementById('staffCount').textContent = data.staff;
+                document.getElementById('feeStats').textContent = 'UGX ' + data.fees.toLocaleString(); // Mock
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        loadStats();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

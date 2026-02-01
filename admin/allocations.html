@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Allocations | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        .allocation-grid {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        select.form-control {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            min-width: 200px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f1f2f3;
+            font-weight: 600;
+            color: #444;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .teacher-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .unassigned {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+    <!-- Include Sidebar via Script or manual copy (Reusing sidebar standard) -->
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class="active"><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 20px;">Staff Allocation Matrix</h2>
+
+        <div class="allocation-grid">
+            <div class="action-bar">
+                <label style="font-weight: 600;">Select Class View:</label>
+                <select id="classSelect" class="form-control" onchange="renderMatrix()">
+                    <option value="S.1">Senior One (S.1)</option>
+                    <option value="S.2">Senior Two (S.2)</option>
+                    <option value="S.3">Senior Three (S.3)</option>
+                    <option value="S.4">Senior Four (S.4)</option>
+                    <option value="S.5">Senior Five (S.5)</option>
+                    <option value="S.6">Senior Six (S.6)</option>
+                    <option value="Vocational">Vocational Class</option>
+                </select>
+                <span class="text-muted" style="margin-left: auto; font-size: 0.9rem;">
+                    Assign teachers to subjects for the selected class.
+                </span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Category</th>
+                        <th>Assigned Teacher</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="matrixBody">
+                    <tr>
+                        <td colspan="5">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div class="modal" id="assignModal">
+        <div class="modal-content">
+            <h3>Assign Teacher</h3>
+            <p id="modalContext" style="margin-bottom: 15px; color: #666;"></p>
+
+            <form id="assignForm">
+                <input type="hidden" id="targetSubjectCode">
+                <input type="hidden" id="targetSubjectName">
+
+                <label style="display:block; margin-bottom:8px; font-weight:600;">Select Staff Member</label>
+                <select id="staffSelect" class="form-control" style="width:100%; margin-bottom:20px;" required>
+                    <option value="">-- Choose Teacher --</option>
+                </select>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        let subjects = [];
+        let staffList = [];
+        let allocations = [];
+
+        async function init() {
+            try {
+                // Fetch All Data Parallel
+                const [resSub, resStaff, resAlloc] = await Promise.all([
+                    fetch(`${API_URL}/academics/subjects`, { headers }),
+                    fetch(`${API_URL}/staff`, { headers }),
+                    fetch(`${API_URL}/allocations`, { headers })
+                ]);
+
+                subjects = await resSub.json();
+                staffList = await resStaff.json();
+                allocations = await resAlloc.json();
+
+                populateStaffSelect();
+                renderMatrix();
+            } catch (e) {
+                console.error('Data Load Error:', e);
+                // Try to alert specific details if available
+                alert('Error loading data: ' + (e.message || 'Unknown error'));
+            }
+        }
+
+        function populateStaffSelect() {
+            const select = document.getElementById('staffSelect');
+            staffList.forEach(s => {
+                select.innerHTML += `<option value="${s.id}">${s.full_name} (${s.role})</option>`;
+            });
+        }
+
+        window.renderMatrix = () => {
+            const currentClass = document.getElementById('classSelect').value;
+            const tbody = document.getElementById('matrixBody');
+            tbody.innerHTML = '';
+
+            // Get Allocations for this class
+            const classAllocations = allocations.filter(a => a.class_level === currentClass);
+
+            // Filter Subjects Based on Class Category
+            let filteredSubjects = [];
+            if (currentClass === 'Vocational') {
+                filteredSubjects = subjects.filter(s => s.category === 'Vocational');
+            } else if (['S.5', 'S.6'].includes(currentClass)) {
+                filteredSubjects = subjects.filter(s => s.category === 'A-Level'); // Ideally A-Level
+            } else {
+                // S.1 - S.4 defaults to O-Level (plus any generic)
+                filteredSubjects = subjects.filter(s => !s.category || s.category === 'O-Level');
+            }
+
+            if (filteredSubjects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No subjects available for this category.</td></tr>';
+                return;
+            }
+
+            filteredSubjects.forEach(sub => {
+                const allocation = classAllocations.find(a => a.subject_code === sub.code);
+                const teacherName = allocation ? allocation.Staff?.full_name : null;
+                const teacherId = allocation ? allocation.Staff?.id : null;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold;">${sub.code}</td>
+                        <td>${sub.name}</td>
+                        <td><small style="color:#777;">${sub.category || 'General'}</small></td>
+                        <td>
+                            ${teacherName
+                        ? `<span class="teacher-badge"><i class="fas fa-user-circle"></i> ${teacherName}</span>`
+                        : `<span class="unassigned">Not Assigned</span>`
+                    }
+                        </td>
+                        <td>
+                            <button onclick="openAssignModal('${sub.code}', '${sub.name}', ${teacherId || 'null'})" 
+                                    class="btn" style="padding:5px 10px; font-size:0.85rem; background: ${teacherName ? '#f0f0f0' : 'var(--school-red)'}; color: ${teacherName ? '#333' : 'white'}; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                                ${teacherName ? 'Change' : 'Assign'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.openAssignModal = (code, name, currentId) => {
+            const cls = document.getElementById('classSelect').value;
+            document.getElementById('modalContext').textContent = `Assigning ${name} for ${cls}`;
+            document.getElementById('targetSubjectCode').value = code;
+            document.getElementById('targetSubjectName').value = name;
+
+            const select = document.getElementById('staffSelect');
+            select.value = currentId || "";
+
+            document.getElementById('assignModal').classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('assignModal').classList.remove('active');
+        };
+
+        document.getElementById('assignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const staffId = document.getElementById('staffSelect').value;
+            const cls = document.getElementById('classSelect').value;
+            const code = document.getElementById('targetSubjectCode').value;
+            const subName = document.getElementById('targetSubjectName').value;
+
+            try {
+                const res = await fetch(`${API_URL}/allocations`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        class_level: cls,
+                        subject_code: code,
+                        subject_name: subName,
+                        staff_id: staffId
+                    })
+                });
+
+                if (res.ok) {
+                    // Update local state without full reload
+                    const saved = await res.json();
+
+                    // Reload all allocations to be safe
+                    const resAlloc = await fetch(`${API_URL}/allocations`, { headers });
+                    allocations = await resAlloc.json();
+
+                    renderMatrix();
+                    closeModal();
+                } else {
+                    alert('Assignment failed');
+                }
+            } catch (e) { console.error(e); }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

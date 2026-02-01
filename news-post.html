@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Details | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="page-hero" style="min-height: 40vh;">
+            <div class="container">
+                <h1 id="postTitle">Loading...</h1>
+                <p id="postDate"></p>
+            </div>
+        </section>
+
+        <!-- Post Content -->
+        <section style="padding: 60px 0;">
+            <div class="container">
+                <a href="/news.html"
+                    style="display: inline-block; margin-bottom: 30px; color: var(--color-primary); font-weight: 600;">
+                    <i class="fas fa-arrow-left"></i> Back to News
+                </a>
+
+                <article
+                    style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--shadow-xl); max-width: 900px; margin: 0 auto;">
+                    <img id="postImage" src="" alt="News Image"
+                        style="width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 30px; display: none;">
+
+                    <span id="postCategory"
+                        style="background: var(--color-primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: inline-block;"></span>
+
+                    <div id="postContent" style="font-size: 1.1rem; line-height: 1.8; color: #333;"></div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+
+            if (!id) {
+                window.location.href = '/news.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/content/cms/${id}`);
+                if (!res.ok) throw new Error('Post not found');
+
+                const post = await res.json();
+
+                document.title = `${post.title} | St. John Paul II Vocational`;
+                document.getElementById('postTitle').textContent = post.title;
+                document.getElementById('postDate').textContent = new Date(post.createdAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('postCategory').textContent = post.category || 'News';
+
+                // Format content (simple preserve newlines)
+                document.getElementById('postContent').innerHTML = post.content.replace(/\n/g, '<br>');
+
+                if (post.image_url) {
+                    const img = document.getElementById('postImage');
+                    img.src = getImageUrl(post.image_url);
+                    img.style.display = 'block';
+                }
+
+                // Handle Page Hero Background if dynamic
+                const hero = document.querySelector('.page-hero');
+                if (post.image_url && hero) {
+                    const bgUrl = getImageUrl(post.image_url);
+                    hero.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                document.querySelector('main').innerHTML = `
+                    <div class="container" style="padding: 100px 0; text-align: center;">
+                        <h2>Post Not Found</h2>
+                        <p>The link may be broken or the post has been removed.</p>
+                        <a href="/news.html" class="btn btn-primary">Go to News</a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>

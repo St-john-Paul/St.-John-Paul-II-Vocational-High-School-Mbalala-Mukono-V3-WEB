@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Professional Staff | ST. JOHN PAUL II VOCATIONAL & HIGH SCHOOL</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero">
+            <div class="container">
+                <h1>Our Professional Staff</h1>
+                <p>YOUR SUCCESS BEGINS HERE</p>
+            </div>
+        </section>
+
+        <!-- Teaching Staff -->
+        <section class="team-content" style="padding-bottom: 50px;">
+            <div class="container">
+                <h2 style="text-align: center; color: var(--color-primary); margin-bottom: 40px;">Teaching Staff</h2>
+                <div class="team-grid" id="teaching-container">
+                    <p style="text-align: center; width: 100%;">Loading Teaching Staff...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support Staff -->
+        <section class="team-content" style="padding-bottom: 100px; background: #f9f9f9; padding-top: 50px;">
+            <div class="container">
+                <h2 style="text-align: center; color: var(--color-primary); margin-bottom: 40px;">Support Staff</h2>
+                <div class="team-grid" id="support-container">
+                    <p style="text-align: center; width: 100%;">Loading Support Staff...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CV Modal -->
+        <div id="cvModal" class="modal"
+            style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-content"
+                style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px;">
+                <span class="close-modal"
+                    style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                <div class="modal-header"
+                    style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
+                    <img id="modalImg" src="" alt="Profile" class="modal-img"
+                        style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                    <div>
+                        <h2 id="modalName" style="margin: 0;"></h2>
+                        <p id="modalTitle" style="color: var(--color-primary); font-weight: 700; margin-top: 5px;"></p>
+                    </div>
+                </div>
+                <div class="cv-details">
+                    <h4>Professional Profile</h4>
+                    <p id="modalBio" style="line-height: 1.6; color: #555;"></p>
+                    <div style="margin-top: 30px;">
+                        <a href="#" id="modalDownload" class="btn "
+                            style="background-color: var(--color-primary); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Download
+                            Full CV</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { API_URL, getImageUrl } from '/src/config.js';
+
+            async function fetchTeam() {
+                try {
+                    const teachingRes = await fetch(`${API_URL}/content/leadership?category=teaching`);
+                    const teachingStaff = await teachingRes.json();
+
+                    const supportRes = await fetch(`${API_URL}/content/leadership?category=support`);
+                    const supportStaff = await supportRes.json();
+
+                    renderTeam(teachingStaff, 'teaching-container');
+                    renderTeam(supportStaff, 'support-container');
+                } catch (error) {
+                    console.error('Error loading team:', error);
+                }
+            }
+
+            function renderTeam(members, containerId) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+
+                if (members.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; width: 100%;">No staff members found.</p>';
+                    return;
+                }
+
+                members.forEach(m => {
+                    const bioSafe = m.bio ? m.bio.replace(/'/g, "\\'") : '';
+                    const photo = getImageUrl(m.photo_url);
+
+                    container.innerHTML += `
+                        <div class="card responsive-card" style="text-align: center; padding: 20px;">
+                            <div class="card-image" style="margin: 0 auto;">
+                                <img src="${photo}" alt="${m.name}">
+                            </div>
+                            <div style="margin-top: 60px;">
+                                <p class="name1" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">${m.name}</p>
+                                <small class="fox" style="color: var(--color-primary); font-weight: 600;">${m.title}</small>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--gray-600); margin-top: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                ${m.bio || 'Dedicated staff member.'}
+                            </p>
+                            <button onclick="window.openCV('${m.name}', '${m.title}', '${photo}', '${bioSafe}', '${m.cv_url}')" 
+                                style="margin-top: 15px; background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); padding: 5px 15px; border-radius: 4px; cursor: pointer;">
+                                View Profile
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            window.openCV = (name, title, img, bio, cvUrl) => {
+                const modal = document.getElementById('cvModal');
+                document.getElementById('modalName').innerText = name;
+                document.getElementById('modalTitle').innerText = title;
+                document.getElementById('modalImg').src = img;
+                document.getElementById('modalBio').innerText = bio || 'No biography available.';
+
+                const dlBtn = document.getElementById('modalDownload');
+                if (cvUrl && cvUrl !== 'undefined' && cvUrl !== 'null') {
+                    dlBtn.href = getImageUrl(cvUrl);
+                    dlBtn.style.display = 'inline-block';
+                    dlBtn.innerText = 'Download CV';
+                } else {
+                    dlBtn.style.display = 'none';
+                }
+
+                modal.style.display = "block";
+            };
+
+            document.querySelector('.close-modal').onclick = () => {
+                document.getElementById('cvModal').style.display = "none";
+            };
+
+            window.onclick = (event) => {
+                const modal = document.getElementById('cvModal');
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+
+            fetchTeam();
+
+            // Load Dynamic Sections
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                        // Handle pages without IDs but matching titles
+                        if (s.section_key.endsWith('_hero') && s.image_url) {
+                            const hero = document.querySelector('.page-hero');
+                            if (hero && !hero.id) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                hero.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        </script>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore our video gallery. Watch highlights of student life, events, and academic activities at St. John Paul II Vocational & High School.">
+    <title>Video Gallery | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .gallery-filters button.active-filter {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .play-icon {
+            font-size: 3rem;
+            color: white;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-item:hover .play-icon {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Video specific lightbox adjustments */
+        .lightbox-content-video {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background: black;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-videos_hero">
+            <div class="container">
+                <h1 data-field="title">Video Gallery</h1>
+                <p data-field="subtitle">WATCH OUR STORIES UNFOLD</p>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <section class="gallery-section" style="padding: 80px 0;">
+            <div class="container">
+                <div class="gallery-filters"
+                    style="display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary active-filter" data-category="All"
+                        style="padding: 8px 20px; font-size: 0.9rem;">All</button>
+                    <button class="btn btn-secondary" data-category="Events"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Events</button>
+                    <button class="btn btn-secondary" data-category="Academics"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Academics</button>
+                    <button class="btn btn-secondary" data-category="Campus"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Campus</button>
+                    <button class="btn btn-secondary" data-category="Sports"
+                        style="padding: 8px 20px; font-size: 0.9rem;">Sports</button>
+                </div>
+
+                <div id="galleryGrid" class="gallery-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    <p style="text-align: center; grid-column: 1/-1;">Loading videos...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <div id="lightboxContainer"
+            style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+            <!-- Content injected here -->
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('galleryGrid');
+            const filterBtns = document.querySelectorAll('.gallery-filters button');
+            const lightbox = document.getElementById('lightboxModal');
+            const lightboxContainer = document.getElementById('lightboxContainer');
+            let currentCategory = 'All';
+
+            // Global functions for lightbox
+            window.openVideoLightbox = (videoUrl, title) => {
+                lightbox.style.display = "flex";
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+                let contentHtml = '';
+
+                if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                    let videoId = '';
+                    if (videoUrl.includes('v=')) videoId = videoUrl.split('v=')[1].split('&')[0];
+                    else if (videoUrl.includes('youtu.be/')) videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+                    else if (videoUrl.includes('embed/')) videoId = videoUrl.split('embed/')[1].split('?')[0];
+
+                    contentHtml = `<iframe class="lightbox-content-video" width="800" height="450" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else {
+                    // Assume direct file
+                    const fullUrl = getImageUrl(videoUrl);
+                    contentHtml = `<video class="lightbox-content-video" controls autoplay style="width: 100%; max-width: 900px;"><source src="${fullUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                }
+
+                lightboxContainer.innerHTML = contentHtml + `<div class="lightbox-caption" style="position: absolute; bottom: 20px; text-align: center; width: 100%; color: white; text-shadow: 1px 1px 5px black;">${title || ''}</div>`;
+            };
+
+            window.closeLightbox = () => {
+                lightbox.style.display = "none";
+                lightboxContainer.innerHTML = ''; // Stop video
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            };
+
+            // Close on click outside
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox || e.target === lightboxContainer) {
+                    closeLightbox();
+                }
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.style.display === "flex") {
+                    closeLightbox();
+                }
+            });
+
+            async function loadVideos(category) {
+                try {
+                    const url = category === 'All'
+                        ? `${API_URL}/content/videos`
+                        : `${API_URL}/content/videos?category=${category}`;
+
+                    const res = await fetch(url);
+                    const videos = await res.json();
+                    grid.innerHTML = '';
+
+                    if (videos.length === 0) {
+                        grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No videos found in this category.</p>';
+                        return;
+                    }
+
+                    videos.forEach(vid => {
+                        const safeTitle = (vid.title || '').replace(/'/g, "\\'");
+                        const thumb = getImageUrl(vid.thumbnail_url || '/hero-main.png');
+
+                        grid.innerHTML += `
+                            <div class="gallery-item" onclick="openVideoLightbox('${vid.video_url}', '${safeTitle}')"
+                                style="border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); position: relative; cursor: pointer;">
+                                <img src="${thumb}" alt="${vid.title}"
+                                    style="width: 100%; height: 250px; object-fit: cover; transition: transform 0.5s ease;">
+                                <div class="overlay" 
+                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.3s;">
+                                    <i class="fas fa-play-circle play-icon"></i>
+                                    <h4 style="color: white; margin-top: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); text-align: center; padding: 0 10px;">${vid.title}</h4>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Add hover effect via JS since inline styles are tricky for pseudo-classes
+                    const items = document.querySelectorAll('.gallery-item');
+                    items.forEach(item => {
+                        item.addEventListener('mouseenter', () => {
+                            item.querySelector('img').style.transform = 'scale(1.05)';
+                            item.querySelector('.overlay').style.background = 'rgba(0,0,0,0.5)';
+                        });
+                        item.addEventListener('mouseleave', () => {
+                            item.querySelector('img').style.transform = 'scale(1)';
+                            item.querySelector('.overlay').style.background = 'rgba(0,0,0,0.3)';
+                        });
+                    });
+
+                } catch (e) {
+                    console.error('Error loading videos:', e);
+                    grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Error loading videos.</p>';
+                }
+            }
+
+            // Filter button clicks
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active-filter'));
+                    btn.classList.add('active-filter');
+                    currentCategory = btn.dataset.category;
+                    loadVideos(currentCategory);
+                });
+            });
+
+            // Initial load
+            loadVideos('All');
+
+            // Load Page Section (Hero)
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

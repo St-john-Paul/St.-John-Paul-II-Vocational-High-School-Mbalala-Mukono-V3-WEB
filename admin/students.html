@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <title>Manage Students | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--gray-600);
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-blue {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 600px;
+            max-width: 90vw;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-section-title {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class="active"><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <div class="admin-header">
+            <h2 style="margin: 0;">Student Management</h2>
+            <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus me-2"></i> Add Student</button>
+        </div>
+
+        <div class="table-container">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <button onclick="exportStudentsData()" class="btn btn-outline" style="margin-left: auto;">
+                    <i class="fas fa-file-export"></i> Export Report
+                </button>
+            </div>
+            <!-- DataTable will inject here -->
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 class="form-section-title">Register New Student</h3>
+            <form id="addStudentForm">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex: 1;">
+                        <label>Class / Course</label>
+                        <select name="class_level" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <optgroup label="Secondary School">
+                                <option value="S.1">S.1</option>
+                                <option value="S.2">S.2</option>
+                                <option value="S.3">S.3</option>
+                                <option value="S.4">S.4</option>
+                                <option value="S.5">S.5</option>
+                                <option value="S.6">S.6</option>
+                            </optgroup>
+                            <optgroup label="Vocational School">
+                                <option value="Year 1 (Vocational)">Year 1 (Vocational)</option>
+                                <option value="Year 2 (Vocational)">Year 2 (Vocational)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Stream</label>
+                        <select name="stream"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Parent Name</label>
+                    <input type="text" name="parent_name"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Parent Phone</label>
+                    <input type="text" name="parent_phone"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h3 class="form-section-title">Edit Student Details</h3>
+            <form id="editStudentForm">
+                <input type="hidden" id="editStudentId">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Full Name</label>
+                    <input type="text" id="editFullName" name="full_name" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <div style="flex: 1;">
+                        <label>Class / Course</label>
+                        <select id="editClassLevel" name="class_level" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <optgroup label="Secondary School">
+                                <option value="S.1">S.1</option>
+                                <option value="S.2">S.2</option>
+                                <option value="S.3">S.3</option>
+                                <option value="S.4">S.4</option>
+                                <option value="S.5">S.5</option>
+                                <option value="S.6">S.6</option>
+                            </optgroup>
+                            <optgroup label="Vocational School">
+                                <option value="Year 1 (Vocational)">Year 1 (Vocational)</option>
+                                <option value="Year 2 (Vocational)">Year 2 (Vocational)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Stream</label>
+                        <select id="editStream" name="stream"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Parent Name</label>
+                    <input type="text" id="editParentName" name="parent_name"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Parent Phone</label>
+                    <input type="text" id="editParentPhone" name="parent_phone"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { DataTable } from '/src/components/DataTable.js';
+
+        // Auth Check
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        let allStudents = [];
+
+        // Modal Logic
+        window.openModal = () => document.getElementById('addStudentModal').style.display = 'flex';
+        window.closeModal = () => document.getElementById('addStudentModal').style.display = 'none';
+        window.openEditModal = () => document.getElementById('editStudentModal').style.display = 'flex';
+        window.closeEditModal = () => document.getElementById('editStudentModal').style.display = 'none';
+
+        window.exportStudentsData = () => {
+            const headers = ['No.', 'Full Name', 'Stream', 'Reg Number', 'Class', 'Parent Name', 'Parent Phone'];
+            const rows = allStudents.map((s, index) => [
+                index + 1, s.full_name, s.stream || '', s.reg_number, s.class_level, s.parent_name || '', s.parent_phone || ''
+            ]);
+            exportToCSV(headers, rows, 'students_report.csv');
+        };
+
+        // Initialize DataTable
+        async function initTable() {
+            try {
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Failed to load data');
+                allStudents = await res.json();
+
+                const columns = [
+                    {
+                        header: 'Student Name',
+                        key: 'full_name',
+                        render: (row) => `
+                            <div style="font-weight: 600;">${row.full_name}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${row.stream || ''}</div>
+                        `
+                    },
+                    { header: 'Reg Number', key: 'reg_number', render: (row) => `<span class="badge badge-blue">${row.reg_number}</span>` },
+                    { header: 'Class', key: 'class_level' },
+                    {
+                        header: 'Parent Info',
+                        key: 'parent_phone',
+                        render: (row) => `
+                            <div>${row.parent_name || '-'}</div>
+                            <div style="font-size: 0.8rem;">${row.parent_phone || ''}</div>
+                        `
+                    },
+                    {
+                        header: 'Actions',
+                        key: 'actions',
+                        render: (row) => `
+                            <button class="btn btn-sm btn-edit" style="background: #4caf50; color: white; margin-right: 5px;" data-id="${row.id}">Edit</button>
+                            <button class="btn btn-sm btn-delete" style="background: #f44336; color: white;" data-id="${row.id}">Delete</button>
+                        `
+                    }
+                ];
+
+                let tableComponent = new DataTable('.table-container', allStudents, columns, { pageSize: 15 });
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.querySelector('.table-container').innerHTML = '<div style="color:red; padding: 20px;">Error loading data</div>';
+            }
+        }
+
+        // Attach Event Listeners (Global Delegation - Run Once)
+        document.querySelector('.table-container').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            const id = btn.dataset.id;
+            if (btn.classList.contains('btn-delete')) deleteStudent(id);
+            if (btn.classList.contains('btn-edit')) editStudent(id);
+        });
+
+        // Delete Student
+        async function deleteStudent(id) {
+            if (!confirm('Are you sure you want to delete this student?')) return;
+            try {
+                const res = await fetch(`${API_URL}/students/${id}`, {
+                    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    alert('Student deleted successfully.');
+                    initTable();
+                } else {
+                    alert('Failed to delete');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Edit Student Logic
+        async function editStudent(id) {
+            const student = allStudents.find(s => s.id == id);
+            if (!student) return;
+            document.getElementById('editStudentId').value = student.id;
+            document.getElementById('editFullName').value = student.full_name;
+            document.getElementById('editClassLevel').value = student.class_level;
+            document.getElementById('editStream').value = student.stream || 'North';
+            document.getElementById('editParentName').value = student.parent_name || '';
+            document.getElementById('editParentPhone').value = student.parent_phone || '';
+            openEditModal();
+        }
+
+        // Handle Edit Form
+        document.getElementById('editStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editStudentId').value;
+            const data = {
+                full_name: document.getElementById('editFullName').value,
+                class_level: document.getElementById('editClassLevel').value,
+                stream: document.getElementById('editStream').value,
+                parent_name: document.getElementById('editParentName').value,
+                parent_phone: document.getElementById('editParentPhone').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/students/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert('Updated!');
+                    closeEditModal();
+                    initTable();
+                } else { alert('Failed'); }
+            } catch (e) { console.error(e); }
+        });
+
+        // Add Student Form
+        document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('Student registered!');
+                    closeModal();
+                    e.target.reset();
+                    initTable();
+                } else { alert('Failed'); }
+            } catch (error) { console.error(error); }
+        });
+
+        initTable();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

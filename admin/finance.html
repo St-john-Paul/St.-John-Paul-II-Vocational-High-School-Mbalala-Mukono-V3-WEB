@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Management | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 600px;
+            max-width: 90vw;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-section-title {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class="active"><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Finance & Payments</h2>
+
+        <div class="form-card">
+            <h3 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Record New Payment
+            </h3>
+            <form id="paymentForm">
+                <div>
+                    <label>Student</label>
+                    <select id="studentSelect" name="student_id" required>
+                        <option value="">Select Student...</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Amount (UGX)</label>
+                        <input type="number" name="amount" required placeholder="e.g. 500000">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Payment Type</label>
+                        <select name="type">
+                            <option value="Tuition">Tuition Fees</option>
+                            <option value="Uniform">Uniform</option>
+                            <option value="Boarding">Boarding Fee</option>
+                            <option value="Development">Development Fee</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Receipt Reference / Bank Slip No.</label>
+                    <input type="text" name="reference" placeholder="e.g. RCPT-00123" required>
+                </div>
+
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; color: #1565c0; display: none;"
+                    id="balanceInfo">
+                    Current Balance: UGX <span id="currentBalance" style="font-weight: bold;">0</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Record Payment</button>
+            </form>
+        </div>
+
+        <!-- Invoicing Section -->
+        <div class="form-card" style="margin-top: 30px; background: #e0f2fe; border: 1px solid #bae6fd;">
+            <h3 style="color: #0284c7; margin-bottom: 15px;"><i class="fas fa-file-invoice"></i> Batch Invoicing (Termly
+                Fees)</h3>
+            <p style="font-size: 0.9rem; color: #555;">Generate termly fee debts for an entire class at once.</p>
+
+            <form id="invoiceForm" style="display: flex; gap: 15px; align-items: flex-end;">
+                <div style="flex: 1;">
+                    <label>Class</label>
+                    <select id="invoiceClass" style="margin-bottom: 0;">
+                        <option value="S.4">Senior Four (S.4)</option>
+                        <option value="S.6">Senior Six (S.6)</option>
+                        <option value="S.1">Senior One (S.1)</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label>Amount (UGX)</label>
+                    <input type="number" id="invoiceAmount" style="margin-bottom: 0;" placeholder="350000">
+                </div>
+                <button type="submit" class="btn" style="background: #0284c7; color: white; height: 46px;">
+                    Generate Invoices
+                </button>
+            </form>
+        </div>
+
+        <!-- Separate Transactions Card -->
+        <div
+            style="background: white; padding: 30px; border-radius: 12px; box-shadow: var(--shadow-sm); margin-top: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Recent Transactions</h3>
+                <button onclick="exportFinanceData()" class="btn btn-outline btn-sm">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Ref</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionList">
+                        <tr>
+                            <td colspan="6" style="text-align:center;">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+            <!-- Mobile Money Simulator -->
+            <div class="form-card" style="margin: 0; background: #fff8e1; border: 1px solid #ffebeb;">
+                <h3 style="color: #d97706; margin-bottom: 15px;">
+                    <i class="fas fa-mobile-alt"></i> Mobile Money Simulator
+                </h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
+                    Test the automatic payment reconcilliation logic without using real money.
+                </p>
+                <form id="momoForm">
+                    <div style="margin-bottom: 15px;">
+                        <label>Student Name</label>
+                        <select id="momoStudent" required style="width: 100%; padding: 10px; border-radius: 6px;">
+                            <option value="">Select Student...</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label>Sender Phone</label>
+                            <input type="text" id="momoPhone" placeholder="077..." required style="margin-bottom: 0;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Amount</label>
+                            <input type="number" id="momoAmount" required style="margin-bottom: 0;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; background: #d97706; color: white;">
+                        <i class="fas fa-signal"></i> Simulate Payment
+                    </button>
+                    <div id="momoStatus" style="margin-top: 15px; font-weight: bold; display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Finance Charts -->
+            <div class="form-card" style="margin: 0;">
+                <h3 style="margin-bottom: 15px;">Revenue Distribution</h3>
+                <canvas id="financeChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div id="editTransactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditTransactionModal()">&times;</span>
+            <h3 class="form-section-title">Edit Transaction</h3>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTransactionId">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Student</label>
+                    <input type="text" id="editStudentName" readonly
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9; cursor: not-allowed;">
+                    <small style="color: #666;">Student cannot be changed.</small>
+                </div>
+                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <div style="flex: 1;">
+                        <label>Amount (UGX)</label>
+                        <input type="number" id="editAmount" name="amount" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Payment Type</label>
+                        <select id="editType" name="type" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="Tuition">Tuition Fees</option>
+                            <option value="Uniform">Uniform</option>
+                            <option value="Boarding">Boarding Fee</option>
+                            <option value="Development">Development Fee</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Receipt Reference / Bank Slip No.</label>
+                    <input type="text" id="editReference" name="reference" required
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const studentSelect = document.getElementById('studentSelect');
+
+        // Load Students for Dropdown
+        async function loadStudents() {
+            try {
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const students = await res.json();
+
+                students.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = `${s.full_name} (${s.reg_number})`;
+                    opt.dataset.balance = s.fee_balance;
+
+                    studentSelect.appendChild(opt.cloneNode(true));
+                    // Add to MoMo dropdown too
+                    const momoOpt = opt.cloneNode(true);
+                    document.getElementById('momoStudent').appendChild(momoOpt);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Show Balance on Selection
+        studentSelect.addEventListener('change', (e) => {
+            const opt = e.target.selectedOptions[0];
+            const balanceInfo = document.getElementById('balanceInfo');
+            if (opt.value) {
+                document.getElementById('currentBalance').textContent = parseFloat(opt.dataset.balance).toLocaleString();
+                balanceInfo.style.display = 'block';
+            } else {
+                balanceInfo.style.display = 'none';
+            }
+        });
+
+        // Submit Payment
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/finance/pay`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    alert(`Payment Recorded! New Balance: UGX ${result.new_balance.toLocaleString()}`);
+                    e.target.reset();
+                    document.getElementById('balanceInfo').style.display = 'none';
+                    // Reload students to update balances in dropdown
+                    studentSelect.innerHTML = '<option value="">Select Student...</option>';
+                    loadStudents();
+                } else {
+                    const err = await res.json();
+                    alert(err.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Payment failed');
+            }
+        });
+
+        loadStudents();
+        loadTransactions();
+
+        let allTransactions = []; // Store for export
+
+        window.exportFinanceData = () => {
+            const headers = ['No.', 'Date', 'Student', 'Type', 'Amount (UGX)', 'Reference'];
+            const rows = allTransactions.map((t, index) => [
+                index + 1,
+                new Date(t.date).toLocaleDateString(),
+                t.Student ? `${t.Student.full_name} (${t.Student.reg_number})` : 'Unknown',
+                t.type,
+                t.amount,
+                t.reference
+            ]);
+            exportToCSV(headers, rows, 'finance_report.csv');
+        };
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_URL}/finance/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await res.json();
+
+                // Render Chart
+                const ctx = document.getElementById('financeChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(stats.by_type),
+                        datasets: [{
+                            data: Object.values(stats.by_type),
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                        }]
+                    }
+                });
+            } catch (e) {
+                console.error('Stats Error:', e);
+            }
+        }
+
+        // MoMo Simulator Logic
+        document.getElementById('momoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const status = document.getElementById('momoStatus');
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+            status.style.display = 'none';
+
+            try {
+                const res = await fetch(`${API_URL}/finance/simulate-momo`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        student_id: document.getElementById('momoStudent').value,
+                        phone: document.getElementById('momoPhone').value,
+                        amount: document.getElementById('momoAmount').value
+                    })
+                });
+
+                const data = await res.json();
+                status.style.display = 'block';
+                status.style.color = res.ok ? 'green' : 'red';
+                status.textContent = data.message;
+
+                if (res.ok) {
+                    loadTransactions();
+                    loadStats(); // Update chart
+                }
+            } catch (err) {
+                alert('Simulation error');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-signal"></i> Simulate Payment';
+                btn.disabled = false;
+            }
+        });
+
+        // Initialize specific finance stuff
+        loadStats();
+
+        // Populate MoMo Dropdown when students load
+        async function loadStudents() {
+            try {
+                const res = await fetch(`${API_URL}/finance`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const transactions = await res.json();
+                allTransactions = transactions; // Store for export
+                const list = document.getElementById('transactionList');
+                list.innerHTML = '';
+
+                if (transactions.length === 0) {
+                    list.innerHTML = `<tr>
+                        <td colspan="6" style="text-align:center;">No recent transactions.</td>
+                    </tr>`;
+                    return;
+                }
+
+                transactions.forEach(t => {
+                    const date = new Date(t.date).toLocaleDateString();
+                    const studentName = t.Student ? `${t.Student.full_name} (${t.Student.reg_number})` : 'Unknown';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 10px 8px;">${date}</td>
+                        <td style="padding: 10px 8px;">${studentName}</td>
+                        <td style="padding: 10px 8px;"><span class="badge badge-green">${t.type}</span></td>
+                        <td style="padding: 10px 8px;">UGX ${t.amount.toLocaleString()}</td>
+                        <td style="padding: 10px 8px;">${t.reference}</td>
+                        <td style="padding: 10px 8px; text-align: center;">
+                            <button class="btn btn-sm" style="background: #007bff; color: white; padding: 5px 8px; margin-right: 5px;" onclick="printReceipt(${t.id})" title="Print Receipt">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            <button class="btn btn-sm" style="background: #4caf50; color: white; padding: 5px 8px; margin-right: 5px;" onclick="editTransaction(${t.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm" style="background: #f44336; color: white; padding: 5px 8px;" onclick="deleteTransaction(${t.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    list.appendChild(row);
+                });
+            } catch (e) {
+                console.error(e);
+                document.getElementById('transactionList').innerHTML = `<tr>
+                    <td colspan="6" style="text-align:center; color:red;">Error loading transactions.</td>
+                </tr>`;
+            }
+        }
+
+        window.printReceipt = (id) => {
+            const t = allTransactions.find(trans => trans.id == id);
+            if (!t) return;
+
+            const studentName = t.Student ? t.Student.full_name : 'Unknown';
+            const regNo = t.Student ? t.Student.reg_number : 'N/A';
+            const date = new Date(t.date).toLocaleString(); // Transaction Timestamp
+            const printDate = new Date().toLocaleString(); // Realtime Print Timestamp
+
+            const receiptContent = `
+                <html>
+                <head>
+    <meta name="view-transition" content="same-origin">
+                    <title>Payment Receipt - ${t.reference}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; padding: 20px; max-width: 400px; margin: 0 auto; text-align: center; border: 1px dashed #333; }
+                        .header { margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+                        .logo { width: 60px; margin-bottom: 10px; }
+                        h2 { margin: 5px 0; font-size: 1.2rem; text-transform: uppercase; }
+                        .info { text-align: left; margin: 20px 0; line-height: 1.6; }
+                        .total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 10px 0; margin: 20px 0; font-weight: bold; font-size: 1.2rem; }
+                        .footer { font-size: 0.8rem; color: #555; margin-top: 30px; border-top: 1px dotted #ccc; padding-top: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <img src="/logo.png" alt="Logo" class="logo">
+                        <h2>St. John Paul II</h2>
+                        <p>Vocational & High School</p>
+                        <p style="font-size: 0.9rem;">OFFICIAL RECEIPT</p>
+                    </div>
+                    
+                    <div class="info">
+                        <strong>Receipt No:</strong> ${t.reference}<br>
+                        <strong>Date:</strong> ${date}<br>
+                        <strong>Student:</strong> ${studentName}<br>
+                        <strong>Reg No:</strong> ${regNo}<br>
+                        <strong>Payment Type:</strong> ${t.type}<br>
+                    </div>
+
+                    <div class="total">
+                        AMOUNT: UGX ${t.amount.toLocaleString()}
+                    </div>
+
+                    <div class="footer">
+                        <p>Printed On: ${printDate}</p>
+                        <p>Thank you for your payment!</p>
+                        <p><i>Authorized Signature</i></p>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            const win = window.open('', '', 'width=450,height=600');
+            win.document.write(receiptContent);
+            win.document.close();
+        };
+
+        // Invoice Generator
+        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to add debt to the entire class?')) return;
+
+            const btn = e.target.querySelector('button');
+            const original = btn.innerHTML;
+            btn.innerHTML = 'Generating...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/finance/generate-invoices`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                        class_level: document.getElementById('invoiceClass').value,
+                        amount: document.getElementById('invoiceAmount').value
+                    })
+                });
+
+                const data = await res.json();
+                alert(data.message);
+                if (res.ok) {
+                    // Update balances
+                    studentSelect.innerHTML = '<option value="">Select Student...</option>';
+                    loadStudents();
+                }
+            } catch (e) {
+                alert('Error generating invoices');
+            } finally {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }
+        });
+
+        window.deleteTransaction = async (id) => {
+            if (!confirm('Are you sure you want to delete this transaction?')) return;
+            try {
+                console.log('Attempting to delete transaction:', id);
+                const res = await fetch(`${API_URL}/finance/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                console.log('Delete response status:', res.status);
+
+                if (res.ok) {
+                    alert('Transaction deleted successfully.');
+                    loadTransactions();
+                    // Reload students to update balances
+                    studentSelect.innerHTML = '<option value="">Select Student...</option>';
+                    loadStudents();
+                } else {
+                    const errorText = await res.text();
+                    console.error('Delete failed:', errorText);
+                    alert('Failed to delete transaction. Error: ' + errorText);
+                }
+            } catch (e) {
+                console.error('Delete error:', e);
+                alert('Error deleting transaction: ' + e.message);
+            }
+        };
+
+        window.editTransaction = (id) => {
+            const transaction = allTransactions.find(t => t.id == id);
+            if (!transaction) return;
+
+            document.getElementById('editTransactionId').value = transaction.id;
+            document.getElementById('editStudentName').value = transaction.Student ?
+                `${transaction.Student.full_name} (${transaction.Student.reg_number})` : 'Unknown';
+            document.getElementById('editAmount').value = transaction.amount;
+            document.getElementById('editType').value = transaction.type;
+            document.getElementById('editReference').value = transaction.reference;
+
+            openEditTransactionModal();
+        };
+
+        window.openEditTransactionModal = () => document.getElementById('editTransactionModal').style.display = 'flex';
+        window.closeEditTransactionModal = () => document.getElementById('editTransactionModal').style.display = 'none';
+
+        // Handle Edit Form Submit
+        document.getElementById('editTransactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('editTransactionId').value;
+            const amount = document.getElementById('editAmount').value;
+            const type = document.getElementById('editType').value;
+            const reference = document.getElementById('editReference').value;
+
+            const updateData = { amount, type, reference };
+
+            try {
+                const res = await fetch(`${API_URL}/finance/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (res.ok) {
+                    alert('Transaction updated successfully.');
+                    closeEditTransactionModal();
+                    loadTransactions();
+                    // Reload students to update balances
+                    studentSelect.innerHTML = '<option value="">Select Student...</option>';
+                    loadStudents();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to update transaction');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error updating transaction: ' + e.message);
+            }
+        });
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sections | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .section-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .section-preview {
+            height: 180px;
+            background-color: #eee;
+            position: relative;
+        }
+
+        .section-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-preview .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .section-key {
+            font-family: monospace;
+            color: #666;
+            font-size: 0.85rem;
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .btn-edit {
+            width: 100%;
+            margin-top: 15px;
+            background: #8B0000;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #660000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class="active"><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <h2 style="color: #8B0000; margin-bottom: 5px;">Page Sections Manager</h2>
+                <p style="color: #666;">Update the content of static website sections like Hero, About Us, and
+                    Facilities.</p>
+            </div>
+            <div>
+                <select id="pageFilter" onchange="filterSections()"
+                    style="padding: 10px; border-radius: 6px; border: 2px solid #ddd; font-weight: 600;">
+                    <option value="all">All Pages</option>
+                    <option value="home">Home Page</option>
+                    <option value="about">About Us</option>
+                    <option value="mission">Mission & Vision</option>
+                    <option value="leadership">Leadership</option>
+                    <option value="staff">Our Staff</option>
+                    <option value="academics">Academics</option>
+                    <option value="fees">Fees Structure</option>
+                    <option value="requirements">Requirements</option>
+                    <option value="admissions">Admissions</option>
+                    <option value="programs">Programs</option>
+                    <option value="student_life">Student Life</option>
+                    <option value="facilities">Facilities</option>
+                    <option value="gallery">Photo Gallery</option>
+                    <option value="videos">Video Gallery</option>
+                    <option value="news">News & Updates</option>
+                    <option value="events">School Events</option>
+                    <option value="clubs">School Clubs</option>
+                    <option value="faqs">FAQs</option>
+                    <option value="contact">Contact</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-grid" id="sectionsGrid">
+            <!-- Cards will be injected here -->
+            <p>Loading sections...</p>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 style="margin-bottom: 20px; color: #8B0000;">Edit Section</h3>
+
+            <form id="editForm">
+                <input type="hidden" name="id" id="editId">
+
+                <div class="form-group">
+                    <label>Section Title</label>
+                    <input type="text" name="title" id="editTitle">
+                </div>
+
+                <div class="form-group">
+                    <label>Subtitle (Tagline)</label>
+                    <input type="text" name="subtitle" id="editSubtitle">
+                </div>
+
+                <div class="form-group">
+                    <label>Body Content</label>
+                    <textarea name="content" id="editContent" rows="5"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Button Text</label>
+                        <input type="text" name="button_text" id="editBtnText">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Button Link</label>
+                        <input type="text" name="button_link" id="editBtnLink">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Update Image (Optional)</label>
+                    <input type="file" name="image" accept="image/*">
+                    <div style="text-align: center; margin: 5px 0; font-weight: bold; color: #666;">- OR -</div>
+                    <input type="url" name="image_url_input" id="editImageUrl"
+                        placeholder="Paste image link here (https://...)">
+                    <div style="margin-top: 5px; font-size: 0.85rem; color: #666;">Or keep current image</div>
+                </div>
+
+                <button type="submit" class="btn-edit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import Toast from '/src/components/toast.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}` }; // For FormData do not set Content-Type
+
+        window.closeModal = () => document.getElementById('editModal').style.display = 'none';
+        window.openModal = () => {
+            document.getElementById('editModal').style.display = 'flex';
+        };
+        // Load Sections
+        async function loadSections() {
+            try {
+                const res = await fetch(`${API_URL}/content/sections`);
+                const sections = await res.json();
+
+                window.allSections = sections; // Store globally
+                filterSections();
+            } catch (e) {
+                console.error(e);
+                Toast.show('Failed to load sections', 'error');
+            }
+        }
+
+        window.filterSections = () => {
+            const filter = document.getElementById('pageFilter').value;
+            const grid = document.getElementById('sectionsGrid');
+            grid.innerHTML = '';
+
+            const filtered = window.allSections.filter(s => {
+                if (filter === 'all') return true;
+
+                // If filter is 'facilities', include about_facility and about_facilities
+                if (filter === 'facilities') {
+                    return s.section_key && (
+                        s.section_key.startsWith('facilities_') ||
+                        s.section_key.startsWith('about_facility_') ||
+                        s.section_key.startsWith('about_facilities_') ||
+                        s.section_key === 'about_facilities'
+                    );
+                }
+
+                // Specific handling for 'student_life' which has an underscore in the filter name itself
+                if (filter === 'student_life') return s.section_key.startsWith('student_life_');
+
+                // Default behavior: filter + '_'
+                return s.section_key && s.section_key.startsWith(filter + '_');
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p>No sections found. Please run seed.</p>';
+                return;
+            }
+
+            window.sectionsData = {};
+
+            filtered.forEach(section => {
+                window.sectionsData[section.id] = section;
+                grid.innerHTML += `
+                    <div class="section-card">
+                        <div class="section-preview">
+                            <img src="${getImageUrl(section.image_url)}" onerror="this.src='/placeholder.png'">
+                            <span class="badge">${section.section_key.replace(/_/g, ' ')}</span>
+                        </div>
+                        <div class="section-body">
+                            <div class="section-title">${section.title || 'Untitled'}</div>
+                            <div class="section-key">${section.subtitle || ''}</div>
+                            <button class="btn-edit" onclick="openEdit(${section.id})">
+                                <i class="fas fa-edit"></i> Modify Content
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.openEdit = (id) => {
+            const s = window.sectionsData[id];
+            if (!s) return;
+
+            document.getElementById('editId').value = s.id;
+            document.getElementById('editTitle').value = s.title || '';
+            document.getElementById('editSubtitle').value = s.subtitle || '';
+            document.getElementById('editContent').value = s.content || '';
+            document.getElementById('editBtnText').value = s.button_text || '';
+            document.getElementById('editBtnLink').value = s.button_link || '';
+
+            // Reset image inputs
+            document.querySelector('#editForm input[name="image"]').value = '';
+            document.getElementById('editImageUrl').value = '';
+
+            document.getElementById('editModal').style.display = 'flex';
+        };
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const formData = new FormData(e.target);
+
+            try {
+                const res = await fetch(`${API_URL}/content/sections/${id}`, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: formData
+                });
+
+                if (res.ok) {
+                    Toast.show('Section updated successfully', 'success');
+                    closeModal();
+                    loadSections();
+                } else {
+                    Toast.show('Update failed. Please try again.', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                Toast.show('Connection error', 'error');
+            }
+        });
+
+        loadSections();
+    </script>
+</body>
+
+</html>

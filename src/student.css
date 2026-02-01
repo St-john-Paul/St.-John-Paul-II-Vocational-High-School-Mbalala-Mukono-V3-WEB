@@ -1,0 +1,292 @@
+:root {
+    --primary: #8B0000;
+    --primary-dark: #660000;
+    --secondary: #FFA500;
+    --bg-light: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    --radius-lg: 1rem;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: var(--font-main);
+    color: var(--text-dark);
+}
+
+.portal-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Premium Welcome Card */
+.welcome-card {
+    background: linear-gradient(135deg, var(--primary) 0%, #4a0404 100%);
+    color: white;
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+    transform: skewX(-20deg);
+}
+
+.welcome-card h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.025em;
+    color: white !important;
+}
+
+.welcome-card p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    color: white !important;
+}
+
+/* Modern Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-sm);
+    margin: 0 auto 2rem auto;
+    width: fit-content;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+    background: rgba(139, 0, 0, 0.05);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(139, 0, 0, 0.2);
+}
+
+/* Responsive Tabs */
+@media (max-width: 600px) {
+    .tabs {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: center;
+        padding: 0.25rem;
+        gap: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .tabs {
+        gap: 0.25rem;
+    }
+
+    .tab-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* For Ultra Small Screens (320px) */
+@media (max-width: 320px) {
+    .tabs {
+        gap: 2px;
+    }
+
+    .tab-btn {
+        padding: 0.5rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .tab-btn i {
+        margin-right: 4px !important;
+    }
+}
+
+/* Grid & Cards */
+.grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card h3 {
+    color: var(--primary);
+    font-size: 1.25rem;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+}
+
+.card h3 i {
+    background: rgba(139, 0, 0, 0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+/* Info Rows */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.info-val {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th {
+    background: #f9fafb;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+.table td {
+    padding: 1rem;
+    border-top: 1px solid #f3f4f6;
+    color: var(--text-dark);
+}
+
+/* Finance Badge */
+.balance-box {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.balance-amount {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-top: 0.5rem;
+    color: #c2410c;
+}
+
+/* Profile Image */
+#studentProfileImg {
+    border: 4px solid white;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s;
+}
+
+#studentProfileImg:hover {
+    transform: scale(1.05);
+}
+
+/* --- TAB SYSTEM FIX --- */
+/* Hide all tab contents by default */
+.tab-content {
+    display: none !important;
+}
+
+/* Only show the content with the active class */
+.tab-content.active {
+    display: block !important;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

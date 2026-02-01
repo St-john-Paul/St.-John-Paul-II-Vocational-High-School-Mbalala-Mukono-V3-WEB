@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Academics | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--school-red);
+            color: var(--school-red);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-olevel {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-alevel {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .badge-vocational {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class="active"><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Academic Management</h2>
+            <button onclick="openSubjectModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Add
+                Subject</button>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab-btn active" onclick="filterCategory('All')">All Subjects</div>
+                <div class="tab-btn" onclick="filterCategory('O-Level')">O-Level</div>
+                <div class="tab-btn" onclick="filterCategory('A-Level')">A-Level</div>
+                <div class="tab-btn" onclick="filterCategory('Vocational')">Vocational</div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Subject Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subjectTableBody">
+                        <tr>
+                            <td colspan="5">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Modal -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Add New Subject</h3>
+            <form id="subjectForm">
+                <input type="hidden" name="id" id="subjectId">
+
+                <label>Subject Name</label>
+                <input type="text" name="name" id="subjectName" placeholder="e.g. Mathematics" required>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label>Subject Code</label>
+                        <input type="text" name="code" id="subjectCode" placeholder="e.g. MTC" required>
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <select name="category" id="subjectCategory" required>
+                            <option value="O-Level">O-Level</option>
+                            <option value="A-Level">A-Level</option>
+                            <option value="Vocational">Vocational</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-weight: normal;">
+                        <input type="checkbox" name="is_core" id="subjectCore" style="width: auto; margin:0;">
+                        Is Core Subject?
+                    </label>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        let allSubjects = [];
+        let currentFilter = 'All';
+
+        // Load Data
+        async function loadSubjects() {
+            try {
+                const res = await fetch(`${API_URL}/academics/subjects`, { headers });
+                allSubjects = await res.json();
+                renderTable();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Render Table
+        function renderTable() {
+            const tbody = document.getElementById('subjectTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = currentFilter === 'All'
+                ? allSubjects
+                : allSubjects.filter(s => s.category === currentFilter);
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#777;">No subjects found.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(s => {
+                let badgeClass = 'badge-olevel';
+                if (s.category === 'A-Level') badgeClass = 'badge-alevel';
+                if (s.category === 'Vocational') badgeClass = 'badge-vocational';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${s.code}</strong></td>
+                        <td>${s.name}</td>
+                        <td><span class="badge ${badgeClass}">${s.category || 'O-Level'}</span></td>
+                        <td>${s.is_core ? '<span class="badge" style="background:#ddd;">Core</span>' : '<span style="color:#999; font-size:0.8rem;">Elective</span>'}</td>
+                        <td>
+                            <button onclick="editSubject(${s.id})" class="btn-icon" style="color:blue;"><i class="fas fa-edit"></i></button>
+                            ${Number(user.id) === 1 || user.role === 'admin' ? `
+                            <button onclick="deleteSubject(${s.id})" class="btn-icon" style="color:red; margin-left:10px;"><i class="fas fa-trash"></i></button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Expose functions to window
+        window.filterCategory = (cat) => {
+            currentFilter = cat;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All')));
+            });
+            renderTable();
+        };
+
+        window.openSubjectModal = () => {
+            document.getElementById('subjectForm').reset();
+            document.getElementById('subjectId').value = '';
+            document.getElementById('modalTitle').innerText = 'Add New Subject';
+            document.getElementById('subjectModal').classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('subjectModal').classList.remove('active');
+        };
+
+        window.editSubject = (id) => {
+            const subject = allSubjects.find(s => s.id === id);
+            if (!subject) return;
+
+            document.getElementById('subjectId').value = subject.id;
+            document.getElementById('subjectName').value = subject.name;
+            document.getElementById('subjectCode').value = subject.code;
+            document.getElementById('subjectCategory').value = subject.category || 'O-Level';
+            document.getElementById('subjectCore').checked = subject.is_core;
+
+            document.getElementById('modalTitle').innerText = 'Edit Subject';
+            document.getElementById('subjectModal').classList.add('active');
+        };
+
+        window.deleteSubject = async (id) => {
+            if (!confirm('Are you sure you want to delete this subject?')) return;
+            try {
+                const res = await fetch(`${API_URL}/academics/subjects/${id}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (res.ok) {
+                    loadSubjects();
+                } else {
+                    alert('Failed to delete subject');
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        // Form Submit
+        document.getElementById('subjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('subjectId').value;
+            const data = {
+                name: document.getElementById('subjectName').value,
+                code: document.getElementById('subjectCode').value,
+                category: document.getElementById('subjectCategory').value,
+                is_core: document.getElementById('subjectCore').checked
+            };
+
+            const url = id
+                ? `${API_URL}/academics/subjects/${id}`
+                : `${API_URL}/academics/subjects`;
+
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers,
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    closeModal();
+                    loadSubjects();
+                } else {
+                    alert('Error saving subject');
+                }
+            } catch (e) { console.error(e); }
+        });
+
+        loadSubjects();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

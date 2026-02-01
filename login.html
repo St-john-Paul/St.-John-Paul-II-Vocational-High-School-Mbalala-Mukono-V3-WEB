@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Login | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8B0000">
+    <style>
+        .login-container {
+            min-height: calc(100vh - 90px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(rgba(139, 0, 0, 0.05), rgba(0, 0, 255, 0.05));
+        }
+
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-2xl);
+            text-align: center;
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--gray-100);
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            color: var(--gray-600);
+        }
+
+        .login-tab.active {
+            background: var(--color-primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <div class="login-container">
+            <div class="login-card">
+                <img src="/logo.png" alt="Logo" style="height: 80px; margin-bottom: 25px;">
+                <h2 style="margin-bottom: 15px;">Welcome to the Portal</h2>
+                <p style="color: var(--gray-600); margin-bottom: 35px;">Access your results, circulars, and school
+                    materials.</p>
+
+                <div class="login-tabs">
+                    <div class="login-tab active">Student</div>
+                    <div class="login-tab">Staff</div>
+                </div>
+
+                <div id="errorMsg"
+                    style="display:none; color: white; background-color: #dc3545; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                </div>
+
+                <form id="loginForm" style="text-align: left;">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="username" style="display: block; margin-bottom: 8px; font-weight: 600;">ID Number /
+                            Username</label>
+                        <input type="text" id="username" placeholder="student"
+                            style="width: 100%; padding: 14px; border: 1px solid var(--gray-300); border-radius: 10px; font-size: 1rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <label for="password"
+                            style="display: block; margin-bottom: 8px; font-weight: 600;">Password</label>
+                        <input type="password" id="password" placeholder="••••••••"
+                            style="width: 100%; padding: 14px; border: 1px solid var(--gray-300); border-radius: 10px; font-size: 1rem;">
+                        <div style="text-align: right; margin-top: 10px;">
+                            <a href="#"
+                                style="font-size: 0.85rem; color: var(--color-primary); font-weight: 600;">Forgot
+                                Password?</a>
+                        </div>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-primary"
+                        style="width: 100%; padding: 15px; font-size: 1.1rem;">Login to Portal</button>
+                </form>
+
+                <div
+                    style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--gray-100); font-size: 0.9rem; color: var(--gray-500);">
+                    <p>New Student? <a href="/admissions.html"
+                            style="color: var(--color-primary); font-weight: 700;">Apply for admission</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module">
+        import { registerPWA } from '/src/utils/pwa.js';
+        registerPWA();
+    </script>
+    <script type="module" src="/src/js/login-page.js"></script>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

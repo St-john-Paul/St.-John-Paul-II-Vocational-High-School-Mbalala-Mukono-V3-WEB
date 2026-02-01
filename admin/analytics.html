@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard | Admin Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #f0f0f0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f8f9fa;
+            padding-bottom: 12px;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #8B0000;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card.small {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #f0f0f0;
+            transition: transform 0.2s;
+        }
+
+        .stat-card.small:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card.small h3 {
+            font-size: 1.8rem;
+            margin: 0;
+            color: #333;
+            font-weight: 800;
+        }
+
+        .stat-card.small p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .risk-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            padding: 25px;
+            margin-top: 20px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .risk-badge {
+            background: #fff5f5;
+            color: #e53e3e;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid #feb2b2;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class="active"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <header class="admin-header"
+            style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="header-title">
+                <h1 style="margin: 0; color: #8B0000; font-size: 1.8rem;">Advanced Analytics</h1>
+                <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">School Performance & Value-Added Analysis
+                </p>
+            </div>
+        </header>
+
+        <!-- Value Added Summary -->
+        <h3 class="section-title">Value Added Analysis (PLE vs UCE)</h3>
+        <div class="summary-stats" id="valueAddedStats">
+            <div class="stat-card small">
+                <div>
+                    <h3 id="totalEnrollment">0</h3>
+                    <p>Total Enrollment</p>
+                </div>
+                <i class="fas fa-school" style="font-size: 1.8rem; color: #8B0000; opacity: 0.2;"></i>
+            </div>
+            <div class="stat-card small">
+                <div>
+                    <h3 id="vaTotal">0</h3>
+                    <p>Evaluated (with PLE)</p>
+                </div>
+                <i class="fas fa-chart-line" style="font-size: 1.8rem; color: #10b981; opacity: 0.2;"></i>
+            </div>
+            <div class="stat-card small" style="border-left: 5px solid #10b981;">
+                <div>
+                    <h3 id="vaImproved" style="color: #10b981">0</h3>
+                    <p>Improved</p>
+                </div>
+                <i class="fas fa-arrow-up" style="font-size: 1.8rem; color: #10b981; opacity: 0.2;"></i>
+            </div>
+            <div class="stat-card small" style="border-left: 5px solid #ef4444;">
+                <div>
+                    <h3 id="vaDeclined" style="color: #ef4444">0</h3>
+                    <p>Declined</p>
+                </div>
+                <i class="fas fa-arrow-down" style="font-size: 1.8rem; color: #ef4444; opacity: 0.2;"></i>
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <!-- Value Added Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Value Added Distribution</div>
+                </div>
+                <canvas id="vaChart"></canvas>
+            </div>
+
+            <!-- Subject Performance Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Top Subject Performance</div>
+                </div>
+                <canvas id="subjectChart"></canvas>
+            </div>
+        </div>
+
+        <!-- At Risk Students -->
+        <h3 class="section-title" style="color: #b91c1c; margin-top: 30px;">
+            <i class="fas fa-exclamation-triangle"></i> Early Warning System: At-Risk Students
+        </h3>
+        <div class="risk-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Reg Number</th>
+                        <th>Failed Subjects</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="riskTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align:center;">Loading analysis...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { API_URL } from '/src/config.js';
+        import Toast from '/src/components/toast.js';
+
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+
+        async function loadAnalytics() {
+            try {
+                const headers = { 'Authorization': `Bearer ${token}` };
+
+                // 1. Value Added Stats
+                const vaRes = await fetch(`${API_URL}/analytics/value-added`, { headers });
+                const vaData = await vaRes.json();
+
+                document.getElementById('totalEnrollment').textContent = vaData.total_enrollment;
+                document.getElementById('vaTotal').textContent = vaData.total_students;
+                document.getElementById('vaImproved').textContent = vaData.improved;
+                document.getElementById('vaDeclined').textContent = vaData.declined;
+
+                new Chart(document.getElementById('vaChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Improved', 'Maintained', 'Declined'],
+                        datasets: [{
+                            data: [vaData.improved, vaData.maintained, vaData.declined],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                        }]
+                    }
+                });
+
+                // 2. Subject Performance
+                const subRes = await fetch(`${API_URL}/analytics/subjects`, { headers });
+                const subData = await subRes.json();
+                const topSubjects = subData.slice(0, 5); // Top 5
+
+                new Chart(document.getElementById('subjectChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: topSubjects.map(s => s.subject),
+                        datasets: [{
+                            label: 'Average Score',
+                            data: topSubjects.map(s => s.avg_score),
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { scales: { y: { beginAtZero: true, max: 100 } } }
+                });
+
+                // 3. At Risk Students
+                const riskRes = await fetch(`${API_URL}/analytics/at-risk`, { headers });
+                const riskData = await riskRes.json();
+                const tbody = document.getElementById('riskTableBody');
+
+                tbody.innerHTML = '';
+                if (riskData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:green;"><i class="fas fa-check-circle"></i> No students currently at risk!</td></tr>';
+                } else {
+                    riskData.forEach(s => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${s.name}</td>
+                            <td>${s.class}</td>
+                            <td>${s.reg_number}</td>
+                            <td><span class="risk-badge">${s.failed_subjects} Failures</span></td>
+                            <td>
+                                <button class="btn-sm" onclick="alert('Contact info: ${s.parent_phone}')">
+                                    <i class="fas fa-phone"></i> Contact Parent
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+            } catch (e) {
+                console.error(e);
+                Toast.show('Failed to load analytics data', 'error');
+            }
+        }
+
+        loadAnalytics();
+    </script>
+</body>
+
+</html>

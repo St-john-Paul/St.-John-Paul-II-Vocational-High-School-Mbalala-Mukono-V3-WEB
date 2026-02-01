@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /student/
+
+Sitemap: https://stjohnpaulvocational.com/sitemap.xml

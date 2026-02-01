@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Testimonials | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        .testimonials-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 20px;
+        }
+
+        .testimonial-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .testimonial-card .content {
+            flex: 1;
+        }
+
+        .testimonial-card h4 {
+            margin: 0 0 5px;
+        }
+
+        .testimonial-card .title {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-card .quote {
+            color: #333;
+            font-style: italic;
+        }
+
+        .testimonial-card .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class="active"><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Testimonials Management</h2>
+
+        <div class="form-card">
+            <h3>Add New Testimonial</h3>
+            <form id="addTestimonialForm">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Author Name</label>
+                        <input type="text" name="author_name" required placeholder="Jane Doe">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Author Title</label>
+                        <input type="text" name="author_title" placeholder="Parent, S.3 Student">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Author Photo</label>
+                        <input type="file" name="author_photo" accept="image/*">
+                        <div style="text-align: center; margin: 5px 0;">- OR -</div>
+                        <input type="url" name="author_photo_url_input"
+                            placeholder="Paste image link here (https://...)">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Rating (1-5)</label>
+                        <select name="rating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label>Testimonial Content</label>
+                    <textarea name="content" rows="4" required
+                        placeholder="What they said about the school..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Testimonial</button>
+            </form>
+        </div>
+
+        <h3>Current Testimonials</h3>
+        <div id="testimonialsList" class="testimonials-list">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+
+    <!-- Edit Testimonial Modal -->
+    <div id="editTestimonialModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h3
+                style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--color-primary);">
+                Edit Testimonial</h3>
+            <form id="editTestimonialForm">
+                <input type="hidden" name="id" id="editTestimonialId">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Author Name</label>
+                        <input type="text" name="author_name" id="editAuthorName" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Author Title</label>
+                        <input type="text" name="author_title" id="editAuthorTitle">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Author Photo (Leave blank to keep current)</label>
+                        <input type="file" name="author_photo" accept="image/*">
+                        <div style="text-align: center; margin: 5px 0;">- OR -</div>
+                        <input type="url" name="author_photo_url_input" id="editAuthorPhotoUrl"
+                            placeholder="Paste image link">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Rating (1-5)</label>
+                        <select name="rating" id="editRating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label>Testimonial Content</label>
+                    <textarea name="content" id="editContent" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">Update
+                    Testimonial</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { optimizeImage } from '/src/utils/imageOptimizer.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        // HEADERS for GET need Auth. POST uses FormData (no Content-Type)
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        async function loadTestimonials() {
+            try {
+                const res = await fetch(`${API_URL}/content/testimonials/all`, { headers });
+                const testimonials = await res.json();
+                const list = document.getElementById('testimonialsList');
+                list.innerHTML = '';
+
+                if (testimonials.length === 0) {
+                    list.innerHTML = '<p>No testimonials yet.</p>';
+                    return;
+                }
+
+                if (!window.testimonialsData) window.testimonialsData = {};
+
+                testimonials.forEach(t => {
+                    window.testimonialsData[t.id] = t;
+                    list.innerHTML += `
+                        <div class="testimonial-card">
+                            <img src="${getImageUrl(t.author_photo) || '/hero-main.png'}" alt="${t.author_name}">
+                            <div class="content">
+                                <h4>${t.author_name}</h4>
+                                <div class="title">${t.author_title || ''} ${'⭐'.repeat(t.rating)}</div>
+                                <div class="quote">"${t.content}"</div>
+                                <div class="actions">
+                                    <button class="btn btn-sm" style="background: blue; color: white;" onclick="openEditModal(${t.id})">Edit</button>
+                                    <button class="btn btn-sm" style="background: #f44336; color: white;" onclick="deleteTestimonial(${t.id})">Delete</button>
+                                    <button class="btn btn-sm" style="background: ${t.is_visible ? '#4caf50' : '#999'}; color: white;" onclick="toggleVisibility(${t.id}, ${!t.is_visible})">${t.is_visible ? 'Visible' : 'Hidden'}</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+                const list = document.getElementById('testimonialsList');
+                if (list) list.innerHTML = '<p>Error loading testimonials.</p>';
+            }
+        }
+
+        window.toggleVisibility = async (id, status) => {
+            try {
+                const res = await fetch(`${API_URL}/content/testimonials/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_visible: status })
+                });
+                if (res.ok) loadTestimonials();
+            } catch (e) { console.error(e); }
+        };
+
+        window.deleteTestimonial = async (id) => {
+            if (!confirm('Delete this testimonial?')) return;
+            try {
+                const res = await fetch(`${API_URL}/content/testimonials/${id}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (res.ok) loadTestimonials();
+            } catch (e) { console.error(e); }
+        };
+
+        document.getElementById('addTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            // OPTIMIZE AUTHOR PHOTO
+            const photoInput = e.target.querySelector('input[name="author_photo"]');
+            const urlInput = e.target.querySelector('input[name="author_photo_url_input"]');
+
+            if (photoInput && photoInput.files.length > 0) {
+                try {
+                    const optimized = await optimizeImage(photoInput.files[0]);
+                    formData.set('author_photo', optimized);
+                } catch (err) { console.warn('Optimization failed'); }
+            } else if (urlInput && urlInput.value) {
+                formData.set('author_photo_url_input', urlInput.value);
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/content/testimonials`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Testimonial added successfully!');
+                    e.target.reset();
+                    loadTestimonials();
+                } else {
+                    const err = await res.json();
+                    alert(err.message);
+                }
+            } catch (e) { console.error(e); alert('Error adding testimonial'); }
+        });
+
+        document.getElementById('editTestimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editTestimonialId').value;
+            const formData = new FormData(e.target);
+
+            // OPTIMIZE IMAGE
+            const fileInput = e.target.querySelector('input[name="author_photo"]');
+            if (fileInput && fileInput.files.length > 0) {
+                try {
+                    const optimizedFile = await optimizeImage(fileInput.files[0]);
+                    formData.set('author_photo', optimizedFile);
+                } catch (err) {
+                    console.warn('Optimization failed');
+                }
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/content/testimonials/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Testimonial updated!');
+                    closeEditModal();
+                    loadTestimonials();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to update');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error processing request');
+            }
+        });
+
+        window.openEditModal = (id) => {
+            const t = window.testimonialsData[id];
+            if (!t) return;
+
+            document.getElementById('editTestimonialId').value = t.id;
+            document.getElementById('editAuthorName').value = t.author_name;
+            document.getElementById('editAuthorTitle').value = t.author_title || '';
+            document.getElementById('editRating').value = t.rating;
+            document.getElementById('editContent').value = t.content;
+
+            document.querySelector('#editTestimonialForm input[name="author_photo"]').value = '';
+            document.getElementById('editAuthorPhotoUrl').value = '';
+
+            document.getElementById('editTestimonialModal').style.display = 'flex';
+        };
+
+        window.closeEditModal = () => {
+            document.getElementById('editTestimonialModal').style.display = 'none';
+        };
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('editTestimonialModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        loadTestimonials();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

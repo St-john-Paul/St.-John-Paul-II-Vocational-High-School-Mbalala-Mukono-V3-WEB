@@ -1,0 +1,21 @@
+{
+    "name": "St. John Paul II Portal",
+    "short_name": "JPII Portal",
+    "start_url": "/login.html",
+    "display": "standalone",
+    "background_color": "#f4f6f9",
+    "theme_color": "#8B0000",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/logo.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}

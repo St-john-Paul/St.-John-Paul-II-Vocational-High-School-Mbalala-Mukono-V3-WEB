@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leadership | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-leadership_hero">
+            <div class="container">
+                <h1 data-field="title">Our Leadership</h1>
+                <p data-field="subtitle">NURTURING EXCELLENCE THROUGH VISIONARY GOVERNANCE</p>
+            </div>
+        </section>
+
+        <!-- Board of Governors -->
+        <section style="padding: 100px 0;">
+            <div class="container" style="text-align: center; margin-bottom: 30px;">
+                <h2 style="margin-bottom: 20px; color: #FFA500;">Board of Governors</h2>
+                <div style="width: 80px; height: 4px; background: #FFA500; margin: 0 auto;"></div>
+            </div>
+
+            <div class="container">
+                <div class="board-grid" id="board-container">
+                    <!-- Dynamic Content -->
+                    <p style="text-align: center; grid-column: 1/-1;">Loading Board Members...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- School Management -->
+        <section style="padding: 100px 0; background: var(--gray-50);">
+            <div class="container" style="text-align: center; margin-bottom: 30px;">
+                <h2 style="margin-bottom: 20px; color: #FFA500;">School Management</h2>
+                <div style="width: 80px; height: 4px; background: #FFA500; margin: 0 auto;"></div>
+            </div>
+
+            <div class="container">
+                <div class="management-grid" id="management-container">
+                    <!-- Dynamic Content -->
+                    <p style="text-align: center; grid-column: 1/-1;">Loading Management Team...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CV Modal -->
+        <div id="cvModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <img id="modalImg" src="" alt="Profile" class="modal-img">
+                    <div>
+                        <h2 id="modalName" style="margin: 0;"></h2>
+                        <p id="modalTitle" style="color: var(--color-primary); font-weight: 700; margin-top: 5px;"></p>
+                    </div>
+                </div>
+                <div class="cv-details">
+                    <h4>Professional Profile</h4>
+                    <p id="modalBio"></p>
+                    <div style="margin-top: 30px;">
+                        <a href="#" id="modalDownload" class="btn btn-primary">Download Full CV</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        async function fetchLeadership() {
+            try {
+                // Fetch Board
+                const boardRes = await fetch(`${API_URL}/content/leadership?category=board`);
+                let boardMembers = await boardRes.json();
+
+                // Fetch Management
+                const mgmtRes = await fetch(`${API_URL}/content/leadership?category=management`);
+                let mgmtMembers = await mgmtRes.json();
+
+                renderMembers(boardMembers, 'board-container', 'board-card');
+                renderMembers(mgmtMembers, 'management-container', 'management-card');
+            } catch (error) {
+                console.error('Error fetching leadership:', error);
+            }
+        }
+
+        function renderMembers(members, containerId, cardClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if (members.length === 0) {
+                container.style.display = 'block';
+                container.innerHTML = `<p style="text-align:center; width:100%;">Coming Soon...</p>`;
+                return;
+            }
+
+            members.forEach(m => {
+                const bioSafe = m.bio ? m.bio.replace(/'/g, "\\'") : '';
+                const photo = getImageUrl(m.photo_url);
+
+                let socialHtml = `
+                        <div class="social-handles">
+                            ${m.facebook ? `<a href="${m.facebook}"><i class="fab fa-facebook-f"></i></a>` : ''}
+                            ${m.twitter ? `<a href="${m.twitter}"><i class="fab fa-twitter"></i></a>` : ''}
+                            ${m.linkedin ? `<a href="${m.linkedin}"><i class="fab fa-linkedin-in"></i></a>` : ''}
+                        </div>
+                    `;
+
+
+                container.innerHTML += `
+                        <div class="${cardClass}">
+                            <div class="card-image">
+                                <img src="${photo}" alt="${m.name}">
+                            </div>
+                            <h3 style="margin-bottom: 10px; margin-top: 20px;">${m.name}</h3>
+                            <p style="color: var(--color-primary); font-weight: 700; text-transform: uppercase; font-size: 0.9rem;">${m.title}</p>
+                            ${socialHtml}
+                            <div class="cv-buttons">
+                                <button class="btn-cv btn-view-cv" onclick="window.openCV('${m.name}', '${m.title}', '${photo}', '${bioSafe}')">View CV</button>
+                                ${m.cv_url ? `<a href="${getImageUrl(m.cv_url)}" class="btn-cv btn-download-cv" download>Download CV</a>` : `<a href="#" class="btn-cv btn-download-cv" style="opacity: 0.5; pointer-events: none;">Download CV</a>`}
+                            </div>
+                        </div>
+                    `;
+            });
+        }
+
+        fetchLeadership();
+
+        window.openCV = (name, title, img, bio) => {
+            const modal = document.getElementById('cvModal');
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalImg').src = img;
+            document.getElementById('modalBio').innerText = bio || 'No biography available.';
+            modal.style.display = "block";
+        };
+
+        document.querySelector('.close-modal').onclick = function () {
+            document.getElementById('cvModal').style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('cvModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Load Dynamic Sections
+        fetch(`${API_URL}/content/sections`)
+            .then(res => res.json())
+            .then(sections => {
+                sections.forEach(s => {
+                    const el = document.getElementById(`section-${s.section_key}`);
+                    if (el) {
+                        if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                        if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                        if (s.image_url) {
+                            const bgUrl = getImageUrl(s.image_url);
+                            el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                        }
+                    }
+                });
+            })
+            .catch(e => console.error(e));
+    </script>
+</body>
+
+</html>

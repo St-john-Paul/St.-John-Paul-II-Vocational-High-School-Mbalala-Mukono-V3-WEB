@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings | Staff Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/staff.css">
+</head>
+
+<body class="staff-page">
+    <!-- Mobile Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Staff Portal</h3>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/staff/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/staff/marks.html"><i class="fas fa-edit"></i> Enter Marks</a>
+            <a href="/staff/my-classes.html"><i class="fas fa-users"></i> My Classes</a>
+
+            <div class="sidebar-label">Academics</div>
+            <a href="/staff/timetable.html"><i class="fas fa-calendar-alt"></i> Timetable</a>
+            <a href="/staff/curriculum.html"><i class="fas fa-book-open"></i> Curriculum</a>
+
+            <div class="sidebar-label">Account</div>
+            <a href="/staff/settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/index.html"><i class="fas fa-arrow-left"></i> Back to System</a>
+            <a href="/staff/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header-modern">
+            <div>
+                <h1 class="page-title-red">Account Settings</h1>
+                <p class="text-muted">Manage your profile and security preferences</p>
+            </div>
+            <div class="header-profile-badge">
+                <div class="profile-circle" id="headerProfileCircle">T</div>
+                <div class="role-badge">STAFF</div>
+            </div>
+        </div>
+
+        <div id="settingsSection"
+            style="max-width: 800px; background: white; padding: 30px; border-radius: 12px; box-shadow: var(--shadow-md);">
+
+            <!-- Tabs -->
+            <div style="display: flex; border-bottom: 2px solid #eee; margin-bottom: 25px;">
+                <div class="tab-btn active" id="btn-profile" onclick="switchTab('profile')"
+                    style="padding: 10px 20px; cursor: pointer; border-bottom: 2px solid var(--primary); color: var(--primary); font-weight: 600;">
+                    My Profile
+                </div>
+                <div class="tab-btn" id="btn-security" onclick="switchTab('security')"
+                    style="padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; color: #666; font-weight: 600;">
+                    Security
+                </div>
+                <div class="tab-btn" id="btn-notifications" onclick="switchTab('notifications')"
+                    style="padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; color: #666; font-weight: 600;">
+                    Notifications
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="tab-profile">
+                <form id="profileForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Full
+                                Name</label>
+                            <input type="text" id="profileName" disabled
+                                style="width: 100%; padding: 10px; border: 1px solid #eee; background: #f9f9f9; border-radius: 8px; color: #777;">
+                            <small style="color:#999;">Contact admin to change name</small>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Role</label>
+                            <input type="text" id="profileRole" disabled
+                                style="width: 100%; padding: 10px; border: 1px solid #eee; background: #f9f9f9; border-radius: 8px; color: #777;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Email
+                            Address</label>
+                        <input type="email" id="profileEmail" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Phone
+                            Number</label>
+                        <input type="tel" id="profilePhone" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+
+                    <button type="submit" class="btn"
+                        style="background: var(--primary); color: white; padding: 10px 25px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="tab-security" style="display: none;">
+                <form id="changePasswordForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Current
+                            Password</label>
+                        <input type="password" id="currentPass" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">New
+                            Password</label>
+                        <input type="password" id="newPass" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <button type="submit" class="btn"
+                        style="background: var(--primary); color: white; padding: 10px 25px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;">
+                        Update Password
+                    </button>
+                </form>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div id="tab-notifications" style="display: none;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+                    <h4 style="margin-top: 0;">Email Alerts</h4>
+                    <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <input type="checkbox" checked> Receive weekly summary
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" checked> High priority announcements
+                    </label>
+
+                    <h4 style="margin-top: 20px;">SMS Alerts</h4>
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox"> Emergency school closures
+                    </label>
+                </div>
+                <button class="btn" onclick="alert('Preferences saved!')"
+                    style="margin-top: 20px; background: var(--primary); color: white; padding: 10px 25px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;">
+                    Save Preferences
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { logout, getCurrentUser } from '/src/utils/auth.js';
+
+        // Mobile Sidebar Toggle
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (overlay) overlay.classList.toggle('active');
+        };
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'staff') {
+            window.location.href = '/login.html';
+        }
+
+        // Tab Logic
+        window.switchTab = (tabName) => {
+            // Update Headers
+            ['profile', 'security', 'notifications'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                const section = document.getElementById(`tab-${t}`);
+
+                if (t === tabName) {
+                    btn.style.borderBottomColor = 'var(--primary)';
+                    btn.style.color = 'var(--primary)';
+                    section.style.display = 'block';
+                } else {
+                    btn.style.borderBottomColor = 'transparent';
+                    btn.style.color = '#666';
+                    section.style.display = 'none';
+                }
+            });
+        };
+
+        // Load Profile Data
+        async function loadProfile() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/staff/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Update Forms
+                    document.getElementById('profileName').value = data.full_name;
+                    document.getElementById('profileRole').value = data.role;
+                    document.getElementById('profileEmail').value = data.email || '';
+                    document.getElementById('profilePhone').value = data.phone_number || '';
+
+                    // Update Header Badge
+                    const fullName = data.full_name || 'Staff';
+                    const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+                    if (document.getElementById('headerProfileCircle')) {
+                        document.getElementById('headerProfileCircle').textContent = initials;
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Update Profile Logic
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            const data = {
+                email: document.getElementById('profileEmail').value,
+                phone_number: document.getElementById('profilePhone').value
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/staff/me`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Failed to update profile');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Connection error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Change Password Logic
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPass').value;
+            const newPassword = document.getElementById('newPass').value;
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+
+            btn.textContent = 'Updating...';
+            btn.disabled = true;
+
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`${API_URL}/auth/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Password updated successfully!');
+                    e.target.reset();
+                } else {
+                    alert(data.message || 'Error updating password');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Initial Load
+        loadProfile();
+    </script>
+</body>
+
+</html>

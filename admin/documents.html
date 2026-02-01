@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Documents | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+    </style>
+    <style>
+        /* Red sidebar to match Dashboard */
+        .sidebar {
+            background: linear-gradient(180deg, #8b0000 0%, #6b0000 100%) !important;
+        }
+
+        .sidebar-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .sidebar-menu a {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+        }
+
+        .sidebar-label {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .sidebar-footer {
+            border-top-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .sidebar-footer a {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class="active"><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px; color: #8B0000;">Document Management</h2>
+
+        <div style="margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="openModal()"
+                style="padding: 10px 20px; font-size: 1rem; border-radius: 6px; background: #8B0000; color: white; border: none; cursor: pointer; font-weight: 500;"><i
+                    class="fas fa-plus"></i> Add Document</button>
+        </div>
+
+        <h3 style="margin-bottom: 20px;color: #0000FF;">Uploaded Documents</h3>
+        <div id="documentsList" style="display: flex; flex-direction: column; gap: 10px;">
+            <p>Loading documents...</p>
+        </div>
+    </div>
+
+    <!-- Add Document Modal -->
+    <div id="addDocumentModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; border-top: 5px solid #8B0000;">
+            <span class="close-modal" onclick="closeModal()"
+                style="color: white; font-size: 1.8rem; font-weight: bold;">&times;</span>
+
+            <!-- Modal Header with Gradient -->
+            <div
+                style="background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; padding: 20px; margin: -30px -30px 25px -30px; border-radius: 12px 12px 0 0;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 600;">
+                    <i class="fas fa-file-upload" style="color: #FFA500;"></i> Add Document
+                </h3>
+                <p style="margin: 8px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Upload a new document or PDF file</p>
+            </div>
+
+            <form id="addDocumentForm">
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 2;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">
+                            <i class="fas fa-heading"></i> Document Title
+                        </label>
+                        <input type="text" name="title" required placeholder="Admission Form 2024..."
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s;"
+                            onfocus="this.style.borderColor='#FFA500'" onblur="this.style.borderColor='#e0e0e0'">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">
+                            <i class="fas fa-folder"></i> Category
+                        </label>
+                        <select name="category"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background: white;"
+                            onfocus="this.style.borderColor='#FFA500'" onblur="this.style.borderColor='#e0e0e0'">
+                            <option value="general">General</option>
+                            <option value="forms">Forms & Applications</option>
+                            <option value="policies">Policies</option>
+                            <option value="calendars">Calendars</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">
+                        <i class="fas fa-link"></i> File URL
+                    </label>
+                    <input type="text" name="file_url" required placeholder="https://... or /uploads/doc.pdf"
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;"
+                        onfocus="this.style.borderColor='#FFA500'" onblur="this.style.borderColor='#e0e0e0'">
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">
+                        <i class="fas fa-align-left"></i> Description (Optional)
+                    </label>
+                    <input type="text" name="description" placeholder="Short description..."
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;"
+                        onfocus="this.style.borderColor='#FFA500'" onblur="this.style.borderColor='#e0e0e0'">
+                </div>
+                <button type="submit"
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(139, 0, 0, 0.4)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 0, 0, 0.3)'">
+                    <i class="fas fa-cloud-upload-alt" style="color: #FFA500;"></i> Add Document
+                </button>
+            </form>
+        </div>
+        <!-- Edit Document Modal -->
+        <div id="editDocumentModal" class="modal">
+            <div class="modal-content" style="max-width: 600px; border-top: 5px solid #8B0000;">
+                <span class="close-modal" onclick="closeEditModal()"
+                    style="color: black; font-size: 1.8rem;">&times;</span>
+                <h3 style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #8B0000;">
+                    Edit Document</h3>
+                <form id="editDocumentForm">
+                    <input type="hidden" name="id" id="editDocId">
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 2;">
+                            <label>Title</label>
+                            <input type="text" name="title" id="editDocTitle" required
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Category</label>
+                            <select name="category" id="editDocCategory"
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                                <option value="general">General</option>
+                                <option value="forms">Forms & Applications</option>
+                                <option value="policies">Policies</option>
+                                <option value="calendars">Calendars</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Optional: File Upload / URL -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Update File (Optional - Leave blank to keep current)</label>
+                        <input type="file" name="file" style="margin-bottom:10px;">
+                        <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">OR Update URL:</div>
+                        <input type="text" name="file_url_input" id="editDocFileUrl"
+                            placeholder="https://... or /uploads/doc.pdf"
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label>Description</label>
+                        <input type="text" name="description" id="editDocDescription"
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; background: #8B0000;">Update
+                        Document</button>
+                </form>
+            </div>
+        </div>
+
+        <script type="module">
+            import { API_URL, getImageUrl } from '/src/config.js';
+            import { getCurrentUser } from '/src/utils/auth.js';
+
+            const user = getCurrentUser();
+            if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+
+            const token = localStorage.getItem('token');
+            const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+            window.openModal = () => document.getElementById('addDocumentModal').style.display = 'flex';
+            window.closeModal = () => document.getElementById('addDocumentModal').style.display = 'none';
+
+            async function loadDocuments() {
+                try {
+                    const res = await fetch(`${API_URL}/content/documents/all`);
+                    const docs = await res.json();
+                    const list = document.getElementById('documentsList');
+                    list.innerHTML = '';
+
+                    if (docs.length === 0) {
+                        list.innerHTML = '<p>No documents found.</p>';
+                        return;
+                    }
+
+                    if (!window.docsData) window.docsData = {};
+
+                    docs.forEach(doc => {
+                        window.docsData[doc.id] = doc;
+                        list.innerHTML += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 1.5rem; color: #dc3545;"><i class="fas fa-file-pdf"></i></div>
+                                <div>
+                                    <h4 style="margin: 0; color: #333;">
+                                        <a href="${doc.file_url}" target="_blank" style="text-decoration: none; color: inherit; hover: text-decoration: underline;">
+                                            ${doc.title}
+                                        </a>
+                                    </h4>
+                                    <p style="margin: 5px 0 0; color: #666; font-size: 0.9em;">${doc.category} &bull; ${doc.description || ''}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <button onclick="openEditModal(${doc.id})" style="background: none; border: none; color: blue; cursor: pointer; margin-right: 10px;"><i class="fas fa-edit"></i></button>
+                                <button onclick="deleteDocument(${doc.id})" style="background: none; border: none; color: #dc3545; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            window.deleteDocument = async (id) => {
+                if (!confirm('Delete this document?')) return;
+                try {
+                    await fetch(`${API_URL}/content/documents/${id}`, { method: 'DELETE', headers });
+                    loadDocuments();
+                } catch (e) { console.error(e); }
+            };
+
+            document.getElementById('addDocumentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    const res = await fetch(`${API_URL}/content/documents`, {
+                        method: 'POST', headers, body: JSON.stringify(data)
+                    });
+                    if (res.ok) {
+                        alert('Document added!');
+                        closeModal();
+                        e.target.reset();
+                        loadDocuments();
+                    } else {
+                        alert('Failed to add document');
+                    }
+                } catch (e) { console.error(e); }
+            });
+
+            document.getElementById('editDocumentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editDocId').value;
+                const formData = new FormData(e.target);
+
+                try {
+                    const res = await fetch(`${API_URL}/content/documents/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `Bearer ${token}` }, // Form Data
+                        body: formData
+                    });
+                    if (res.ok) {
+                        alert('Document updated!');
+                        closeEditModal();
+                        loadDocuments();
+                    } else {
+                        const err = await res.json();
+                        alert(err.message || 'Failed to update');
+                    }
+                } catch (e) { console.error(e); alert('Error updating'); }
+            });
+
+            window.openEditModal = (id) => {
+                const doc = window.docsData[id];
+                if (!doc) return;
+
+                document.getElementById('editDocId').value = doc.id;
+                document.getElementById('editDocTitle').value = doc.title;
+                document.getElementById('editDocCategory').value = doc.category;
+                document.getElementById('editDocDescription').value = doc.description || '';
+                document.getElementById('editDocFileUrl').value = '';
+                document.querySelector('#editDocumentForm input[name="file"]').value = ''; // Reset file input
+
+                document.getElementById('editDocumentModal').style.display = 'flex';
+            };
+
+            window.closeEditModal = () => {
+                document.getElementById('editDocumentModal').style.display = 'none';
+            };
+
+            window.onclick = function (event) {
+                const modal = document.getElementById('editDocumentModal');
+                const addModal = document.getElementById('addDocumentModal');
+                if (event.target == modal) modal.style.display = "none";
+                if (event.target == addModal) addModal.style.display = "none";
+            }
+
+            loadDocuments();
+        </script>
+        <script src="/src/admin.js"></script>
+</body>
+
+</html>

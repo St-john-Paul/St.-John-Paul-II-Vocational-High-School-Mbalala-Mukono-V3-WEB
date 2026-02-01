@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Inquiries | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .inquiry-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .inquiry-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .inquiry-card.contacted {
+            border-left-color: #ff9800;
+        }
+
+        .inquiry-card.enrolled {
+            border-left-color: #4caf50;
+        }
+
+        .inquiry-card h4 {
+            margin: 0 0 5px;
+        }
+
+        .inquiry-card .meta {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .inquiry-card .message {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .inquiry-card .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-contacted {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-enrolled {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class="active"><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Admission Inquiries</h2>
+
+        <div id="inquiriesList" class="inquiry-cards">
+            <p>Loading inquiries...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        async function loadInquiries() {
+            try {
+                const res = await fetch(`${API_URL}/content/inquiries`, { headers });
+                const inquiries = await res.json();
+                const list = document.getElementById('inquiriesList');
+                list.innerHTML = '';
+
+                if (inquiries.length === 0) {
+                    list.innerHTML = '<p>No inquiries yet.</p>';
+                    return;
+                }
+
+                inquiries.forEach(inq => {
+                    const date = new Date(inq.createdAt).toLocaleDateString();
+                    const course = inq.preferred_course === 'Other' ? inq.other_course : inq.preferred_course;
+                    list.innerHTML += `
+                        <div class="inquiry-card ${inq.status}">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h4>${inq.student_name}</h4>
+                                    <div class="meta">
+                                        <i class="fas fa-phone"></i> ${inq.phone} &nbsp;|&nbsp;
+                                        <i class="fas fa-envelope"></i> ${inq.email || 'N/A'} &nbsp;|&nbsp;
+                                        <i class="fas fa-calendar"></i> ${date}
+                                    </div>
+                                </div>
+                                <span class="status-badge status-${inq.status}">${inq.status}</span>
+                            </div>
+                            <p><strong>Preferred Course:</strong> ${course || 'Not specified'}</p>
+                            <p><strong>Parent:</strong> ${inq.parent_name || 'N/A'} | <strong>Current School:</strong> ${inq.current_school || 'N/A'}</p>
+                            ${inq.message ? `<div class="message">"${inq.message}"</div>` : ''}
+                            <div class="actions">
+                                <button class="btn btn-sm" style="background: #ff9800; color: white;" onclick="updateStatus(${inq.id}, 'contacted')">Mark Contacted</button>
+                                <button class="btn btn-sm" style="background: #4caf50; color: white;" onclick="updateStatus(${inq.id}, 'enrolled')">Mark Enrolled</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        window.updateStatus = async (id, status) => {
+            try {
+                await fetch(`${API_URL}/content/inquiries/${id}`, {
+                    method: 'PUT', headers, body: JSON.stringify({ status })
+                });
+                loadInquiries();
+            } catch (e) { console.error(e); }
+        };
+
+        loadInquiries();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

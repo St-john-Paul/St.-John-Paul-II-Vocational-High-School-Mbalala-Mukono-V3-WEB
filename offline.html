@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline | St. John Paul II</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .icon {
+            font-size: 5rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #8B0000;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #600000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="icon">
+        <i class="fas fa-wifi"></i>
+    </div>
+    <h1>You are Offline</h1>
+    <p>It seems you have lost your internet connection. Check your WiFi or mobile data and try again.</p>
+    <a href="/" class="btn" onclick="window.location.reload(); return false;">
+        <i class="fas fa-sync-alt"></i> Try Again
+    </a>
+</body>
+
+</html>

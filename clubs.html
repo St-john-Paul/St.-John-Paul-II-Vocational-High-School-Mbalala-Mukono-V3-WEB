@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clubs & Activities | ST. JOHN PAUL II VOCATIONAL & HIGH SCHOOL</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-clubs_hero">
+            <div class="container">
+                <h1 data-field="title">School Clubs</h1>
+                <p data-field="subtitle">YOUR SUCCESS BEGINS HERE</p>
+            </div>
+        </section>
+
+        <!-- Clubs Grid -->
+        <section class="clubs-section">
+            <div class="container">
+                <div class="clubs-grid grid-3-col">
+                    <!-- Club Card 1 - PRESERVED CSS -->
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-theater-masks"></i></div>
+                        <h3>Music, Dance & Drama</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Celebrating our rich
+                            Ugandan heritage through performance arts, music competitions, and theatrical productions.
+                        </p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-square-root-alt"></i></div>
+                        <h3>Mathematics Club</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">For the logic-driven
+                            minds. Engaging in math contests, puzzles, and academic peer support.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-flask"></i></div>
+                        <h3>Science Clubs</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Exploring the wonders
+                            of science through experiments, innovation fairs, and environmental projects.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-shield-alt"></i></div>
+                        <h3>Nkobazambogo Club</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Promoting our cultural
+                            values, unity, and traditional heritage among the student body.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-handshake"></i></div>
+                        <h3>Interact Club</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Leadership through
+                            service. Partnering with Rotary International to make a difference in our community.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-hiking"></i></div>
+                        <h3>Scouts & Girl Guides</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Building character,
+                            discipline, and survival skills through camping and civic service.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-leaf"></i></div>
+                        <h3>Wildlife & Environment</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Champions of
+                            conservation. protecting our campus environment and learning about Ugandan wildlife.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-futbol"></i></div>
+                        <h3>Sports & Games</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">From football to
+                            netball and athletics. We believe in a sound mind in a sound body.</p>
+                    </div>
+
+                    <div class="club-card">
+                        <div style="font-size: 3rem; margin-bottom: 10px; color: var(--color-primary);"><i
+                                class="fas fa-comments"></i></div>
+                        <h3>Debating Society</h3>
+                        <p style="text-align: center; color: var(--gray-600); margin-top: 15px;">Sharpening public
+                            speaking, critical thinking, and persuasive communication skills.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

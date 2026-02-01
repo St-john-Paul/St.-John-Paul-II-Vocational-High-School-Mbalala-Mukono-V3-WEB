@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Marks | Staff Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/staff.css">
+    <style>
+        :root {
+            --school-red: #8B0000;
+            --school-orange: #FFA500;
+        }
+
+        /* --- Modern Filter Bar --- */
+        .filter-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .filter-title {
+            font-size: 1.25rem;
+            color: var(--school-red);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .cat-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #f8f9fa;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .cat-tab.active {
+            background: var(--school-red);
+            color: white;
+            border-color: var(--school-red);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--school-orange);
+            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
+            outline: none;
+        }
+
+        /* Searchable Dropdown Styles */
+        .custom-select-wrapper {
+            position: relative;
+        }
+
+        .custom-select-display {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-select-display:hover {
+            border-color: #ccc;
+        }
+
+        .custom-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            margin-top: 5px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .custom-dropdown.open {
+            display: block;
+        }
+
+        .custom-search {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        .custom-search input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .custom-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .custom-option:hover {
+            background: #fff3e0;
+            color: #d97706;
+        }
+
+        .custom-option.selected {
+            background: #fff3e0;
+            font-weight: 600;
+        }
+
+        /* --- Analysis Cards --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+            display: none;
+            /* Hidden until loaded */
+        }
+
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border-bottom: 4px solid transparent;
+        }
+
+        .stat-box.avg {
+            border-color: #3b82f6;
+        }
+
+        .stat-box.pass {
+            border-color: #10b981;
+        }
+
+        .stat-box.fail {
+            border-color: #ef4444;
+        }
+
+        .stat-box.progress {
+            border-color: var(--school-orange);
+        }
+
+        .stat-box h4 {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .stat-box .valu {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        /* --- Table Styles --- */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 2px;
+            /* For border radius clip */
+            overflow: hidden;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modern-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--school-red);
+            border-bottom: 2px solid #eee;
+        }
+
+        .modern-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .modern-table tr:hover {
+            background: #fff9f9;
+        }
+
+        .mark-input {
+            width: 70px;
+            padding: 8px 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mark-input:focus {
+            border-color: var(--school-orange);
+            background: #fffbf0;
+            outline: none;
+        }
+
+        .mark-input.invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .total-cell {
+            font-weight: 700;
+            color: var(--school-red);
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--school-red) 0%, #a52a2a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 40px;
+            /* Wider button */
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.3);
+        }
+
+        .save-bar {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 80px;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .modern-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .save-bar {
+                bottom: 10px;
+                right: 10px;
+                width: calc(100% - 20px);
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="staff-page">
+    <!-- Mobile Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Staff Portal</h3>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/staff/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/staff/marks.html" class="active"><i class="fas fa-edit"></i> Enter Marks</a>
+            <a href="/staff/my-classes.html"><i class="fas fa-users"></i> My Classes</a>
+
+            <div class="sidebar-label">Academics</div>
+            <a href="/staff/timetable.html"><i class="fas fa-calendar-alt"></i> Timetable</a>
+            <a href="/staff/curriculum.html"><i class="fas fa-book-open"></i> Curriculum</a>
+
+            <div class="sidebar-label">Account</div>
+            <a href="/staff/settings.html"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/index.html"><i class="fas fa-arrow-left"></i> Back to System</a>
+            <a href="/staff/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- Modern Filter Card -->
+        <div class="filter-card">
+            <div class="filter-header">
+                <div class="filter-title">
+                    <i class="fas fa-pen-nib"></i> Marks Entry Area
+                </div>
+                <div class="text-muted" style="font-size: 0.9rem;">
+                    Academic Year 2026
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <div class="cat-tab active" onclick="filterSubjects('All', this)">All Subjects</div>
+                <div class="cat-tab" onclick="filterSubjects('O-Level', this)">O-Level</div>
+                <div class="cat-tab" onclick="filterSubjects('A-Level', this)">A-Level</div>
+                <div class="cat-tab" onclick="filterSubjects('Vocational', this)">Vocational</div>
+            </div>
+
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>Select Class</label>
+                    <select id="classSelect" class="form-control">
+                        <option value="">Choose Class...</option>
+                        <option value="S.1">Senior One (S.1)</option>
+                        <option value="S.2">Senior Two (S.2)</option>
+                        <option value="S.3">Senior Three (S.3)</option>
+                        <option value="S.4">Senior Four (S.4)</option>
+                        <option value="S.5">Senior Five (S.5)</option>
+                        <option value="S.6">Senior Six (S.6)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Stream / Area</label>
+                    <select id="streamSelect" class="form-control">
+                        <option value="">All Streams</option>
+                        <option value="North">North Stream</option>
+                        <option value="South">South Stream</option>
+                        <option value="East">East Stream</option>
+                        <option value="West">West Stream</option>
+                    </select>
+                </div>
+
+                <!-- Custom Searchable Subject Select -->
+                <div class="form-group">
+                    <label>Subject / Course</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select-display" onclick="toggleSubjectDropdown()">
+                            <span id="selectedSubjectText">Select Subject...</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <input type="hidden" id="subjectSelect">
+                        <div class="custom-dropdown" id="subjectDropdown">
+                            <div class="custom-search">
+                                <input type="text" placeholder="Search subject..."
+                                    onkeyup="filterSubjectOptions(this.value)">
+                            </div>
+                            <div id="subjectOptionsList">
+                                <!-- Options populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Term</label>
+                    <select id="termSelect" class="form-control">
+                        <option value="Term 1">Term 1</option>
+                        <option value="Term 2">Term 2</option>
+                        <option value="Term 3">Term 3</option>
+                    </select>
+                </div>
+
+                <div class="form-group"
+                    style="grid-column: 1/-1; border-top: 1px dashed #eee; padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <label style="margin-bottom: 0;">Grading System</label>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <label style="cursor: pointer; display: flex; align-items: center;">
+                                <input type="radio" name="gradingSystem" value="new_system" checked
+                                    onchange="toggleGradingSystem()">
+                                <span
+                                    style="margin-left: 5px; font-weight: 600; color: var(--school-red);">Competency-Based
+                                    (New)</span>
+                            </label>
+                            <label style="cursor: pointer; display: flex; align-items: center; margin-left: 15px;">
+                                <input type="radio" name="gradingSystem" value="old_system"
+                                    onchange="toggleGradingSystem()">
+                                <span style="margin-left: 5px;">Content-Based (Old)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="document.getElementById('calculatorModal').style.display='flex'"
+                        style="background: #fff3e0; color: #d97706; border: 1px solid #d97706; padding: 8px 15px; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-calculator"></i> Grade Calculator
+                    </button>
+                </div>
+
+                <button class="btn-action" id="loadStudentsBtn" style="grid-column: span 1;">
+                    <i class="fas fa-sync-alt"></i> Load Class
+                </button>
+            </div>
+        </div>
+
+        <!-- Realtime Stats (Hidden Initial) -->
+        <div id="statsSection" class="stats-row">
+            <div class="stat-box avg">
+                <h4>Class Average</h4>
+                <div class="valu" id="statAvg">-</div>
+            </div>
+            <div class="stat-box pass">
+                <h4>Highest Mark</h4>
+                <div class="valu" id="statHigh">-</div>
+            </div>
+            <div class="stat-box fail">
+                <h4>Lowest Mark</h4>
+                <div class="valu" id="statLow">-</div>
+            </div>
+            <div class="stat-box progress">
+                <h4>Completion</h4>
+                <div class="valu" id="statProgress">0%</div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-card">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th width="5%">No.</th>
+                        <th width="15%">Reg Number</th>
+                        <th width="20%">Student Name</th>
+                        <th width="12%">CA (20%)</th>
+                        <th width="12%">Project</th>
+                        <th width="12%">EOT (80%)</th>
+                        <th width="15%">Final Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
+                            <i class="fas fa-chalkboard-teacher"
+                                style="font-size: 3rem; margin-bottom: 10px; display: block; opacity: 0.3;"></i>
+                            Select Class details above to start entering marks.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sticky Save Action -->
+        <div class="save-bar" id="saveBar">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div
+                    style="background: rgba(0,0,0,0.7); padding: 5px 15px; border-radius: 20px; color: white; display: flex; align-items: center; gap: 10px;">
+                    <span id="unsavedCount">0</span> changes unsaved
+                    <span id="autoSaveStatus" style="font-size: 0.8rem; opacity: 0.7;"></span>
+                </div>
+                <button class="btn-action" id="saveMarksBtn">
+                    <i class="fas fa-save"></i> Save All Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Grade Calculator Modal -->
+    <div id="calculatorModal" class="modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; position: relative;">
+            <button onclick="document.getElementById('calculatorModal').style.display='none'"
+                style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer;">&times;</button>
+            <h3 style="color: var(--school-red); margin-top: 0;">UNEB Grade Calculator</h3>
+            <p style="color: #666; font-size: 0.9rem;">Test how CA and EOT marks affect the final grade.</p>
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Continuous Assessment (20%)</label>
+                    <input type="range" min="0" max="100" value="0" id="calcCA" oninput="updateCalc()">
+                    <span id="valCA" style="float: right; font-weight: bold;">0</span>
+                </div>
+                <div class="form-group">
+                    <label>End of Term Exam (80%)</label>
+                    <input type="range" min="0" max="100" value="0" id="calcEOT" oninput="updateCalc()">
+                    <span id="valEOT" style="float: right; font-weight: bold;">0</span>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--school-red);" id="calcGrade">-</div>
+                <div style="font-size: 1.2rem; color: #333;" id="calcScore">0%</div>
+                <p id="calcDescriptor" style="font-style: italic; color: #666; margin-top: 5px;">-</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'staff') {
+            window.location.href = '/login.html';
+        }
+
+        // Mobile Sidebar
+        if (window.innerWidth <= 768) {
+            document.querySelector('.menu-toggle').style.display = 'block';
+        }
+        window.toggleSidebar = () => {
+            document.getElementById('sidebar').classList.toggle('active');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (overlay) overlay.classList.toggle('active');
+        };
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        // Configuration
+        let currentGradingSystem = 'new_system'; // 'new_system' or 'old_system'
+        let unsavedChanges = 0;
+
+        // --- Subject Handling ---
+        let allSubjects = [];
+        let filteredSubjects = [];
+
+        async function loadSubjects() {
+            try {
+                const res = await fetch(`${API_URL}/academics/subjects`, { headers });
+                allSubjects = await res.json();
+                filteredSubjects = allSubjects; // Default to all
+                renderSubjectOptions();
+            } catch (e) { console.error('Subject Load Error', e); }
+        }
+
+        window.filterSubjects = (category, btn) => {
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (category === 'All') {
+                filteredSubjects = allSubjects;
+            } else {
+                filteredSubjects = allSubjects.filter(s => s.category === category || (!s.category && category === 'O-Level'));
+            }
+            renderSubjectOptions();
+            document.getElementById('selectedSubjectText').textContent = 'Select Subject...';
+            document.getElementById('subjectSelect').value = '';
+        };
+
+        function renderSubjectOptions() {
+            const list = document.getElementById('subjectOptionsList');
+            list.innerHTML = '';
+            if (filteredSubjects.length === 0) {
+                list.innerHTML = '<div style="padding:10px; color:#999;">No subjects found</div>';
+                return;
+            }
+            filteredSubjects.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'custom-option';
+                div.textContent = `${s.name} (${s.code})`;
+                div.onclick = () => selectSubject(s.id, s.name);
+                list.appendChild(div);
+            });
+        }
+
+        window.toggleSubjectDropdown = () => document.getElementById('subjectDropdown').classList.toggle('open');
+        window.filterSubjectOptions = (query) => {
+            const lower = query.toLowerCase();
+            document.querySelectorAll('.custom-option').forEach(opt => {
+                const text = opt.textContent.toLowerCase();
+                opt.style.display = text.includes(lower) ? 'block' : 'none';
+            });
+        };
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-select-wrapper')) {
+                document.getElementById('subjectDropdown').classList.remove('open');
+            }
+        });
+
+        function selectSubject(id, name) {
+            document.getElementById('subjectSelect').value = id;
+            document.getElementById('selectedSubjectText').textContent = name;
+            document.getElementById('subjectDropdown').classList.remove('open');
+        }
+
+        // --- Grading System Toggle ---
+        window.toggleGradingSystem = () => {
+            const radios = document.getElementsByName('gradingSystem');
+            currentGradingSystem = Array.from(radios).find(r => r.checked)?.value || 'new_system';
+
+            // Update table headers
+            const thead = document.querySelector('.modern-table thead tr');
+            if (currentGradingSystem === 'new_system') {
+                thead.innerHTML = `
+                    <th width="5%">No.</th>
+                    <th width="15%">Reg Number</th>
+                    <th width="20%">Student Name</th>
+                    <th width="12%">CA (20%)</th>
+                    <th width="12%">Project</th>
+                    <th width="12%">EOT (80%)</th>
+                    <th width="15%">Final Grade</th>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <th width="5%">No.</th>
+                    <th width="15%">Reg Number</th>
+                    <th width="20%">Student Name</th>
+                    <th width="12%">BOT (40)</th>
+                    <th width="12%">MOT (30)</th>
+                    <th width="12%">EOT (30)</th>
+                    <th width="10%">Total</th>
+                    <th width="9%">Grade</th>
+                `;
+            }
+
+            // If students loaded, re-render empty rows to match schema
+            if (document.getElementById('marksTableBody').children.length > 0 && !document.getElementById('marksTableBody').innerHTML.includes('Select Class')) {
+                document.getElementById('loadStudentsBtn').click();
+            }
+        };
+
+        // --- Grade Calculator ---
+        window.updateCalc = () => {
+            const ca = parseInt(document.getElementById('calcCA').value) || 0;
+            const eot = parseInt(document.getElementById('calcEOT').value) || 0;
+
+            document.getElementById('valCA').textContent = ca;
+            document.getElementById('valEOT').textContent = eot;
+
+            const finalScore = (ca * 0.20) + (eot * 0.80);
+
+            let grade = 'E';
+            let desc = 'Elementary';
+
+            if (finalScore >= 80) { grade = 'A'; desc = 'Exceptional Achievement'; }
+            else if (finalScore >= 65) { grade = 'B'; desc = 'Outstanding Performance'; }
+            else if (finalScore >= 50) { grade = 'C'; desc = 'Satisfactory'; }
+            else if (finalScore >= 35) { grade = 'D'; desc = 'Basic'; }
+
+            const calcGradeEl = document.getElementById('calcGrade');
+            calcGradeEl.textContent = grade;
+            calcGradeEl.style.color = grade === 'A' ? '#10b981' : grade === 'E' ? '#ef4444' : 'var(--school-red)';
+
+            document.getElementById('calcScore').textContent = finalScore.toFixed(2) + '%';
+            document.getElementById('calcDescriptor').textContent = desc;
+        }
+
+        // --- Student Loading ---
+        document.getElementById('loadStudentsBtn').addEventListener('click', async () => {
+            const classLevel = document.getElementById('classSelect').value;
+            const stream = document.getElementById('streamSelect').value;
+            const subjectId = document.getElementById('subjectSelect').value;
+
+            if (!classLevel || !subjectId) {
+                alert('Please ensure Class and Subject are selected.');
+                return;
+            }
+
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+
+            try {
+                let url = `${API_URL}/students?class_level=${classLevel}`;
+                if (stream) url += `&stream=${stream}`;
+
+                const res = await fetch(url, { headers });
+                const students = await res.json();
+                renderTable(students);
+                document.getElementById('statsSection').style.display = 'grid';
+                document.getElementById('saveBar').style.display = 'block';
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Error: ${e.message}</td></tr>`;
+            }
+        });
+
+        function renderTable(students) {
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No students found in this class.</td></tr>';
+                return;
+            }
+
+            students.forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.dataset.studentId = s.id;
+
+                if (currentGradingSystem === 'new_system') {
+                    // NEW UNEB SYSTEM (Competency-Based)
+                    tr.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td style="font-family: monospace;">${s.reg_number}</td>
+                        <td style="font-weight: 500;">${s.full_name}</td>
+                        <td><input type="number" class="mark-input ca" data-max="100" placeholder="0-100"></td>
+                        <td><input type="number" class="mark-input proj" data-max="100" placeholder="0-100"></td>
+                        <td><input type="number" class="mark-input eot" data-max="100" placeholder="0-100"></td>
+                        <td class="final-grade-cell" style="font-weight: bold; font-size: 1.1rem; text-align: center;">-</td>
+                    `;
+                } else {
+                    // OLD SYSTEM (Content-Based)
+                    tr.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td style="font-family: monospace;">${s.reg_number}</td>
+                        <td style="font-weight: 500;">${s.full_name}</td>
+                        <td><input type="number" class="mark-input bot" data-max="40" placeholder="-"></td>
+                        <td><input type="number" class="mark-input mot" data-max="30" placeholder="-"></td>
+                        <td><input type="number" class="mark-input eot" data-max="30" placeholder="-"></td>
+                        <td class="total-cell">-</td>
+                        <td class="grade-cell">-</td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+
+            document.querySelectorAll('.mark-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    handleMarkInput(e.target);
+                    unsavedChanges++;
+                    updateSaveStatus();
+                });
+            });
+
+            unsavedChanges = 0;
+            updateSaveStatus();
+            updateStats();
+        }
+
+        function handleMarkInput(input) {
+            const max = parseInt(input.dataset.max);
+            let val = parseInt(input.value);
+
+            if (val > max) {
+                input.classList.add('invalid');
+                input.value = max;
+            } else if (val < 0) {
+                input.classList.remove('invalid');
+                input.value = 0;
+            } else {
+                input.classList.remove('invalid');
+            }
+
+            const row = input.closest('tr');
+
+            if (currentGradingSystem === 'new_system') {
+                // New System Calculation
+                const ca = parseInt(row.querySelector('.ca').value) || 0;
+                const eot = parseInt(row.querySelector('.eot').value) || 0;
+
+                // Formula: (CA * 0.2) + (EOT * 0.8)
+                const finalScore = (ca * 0.20) + (eot * 0.80);
+
+                let grade = 'E';
+                if (finalScore >= 80) grade = 'A';
+                else if (finalScore >= 65) grade = 'B';
+                else if (finalScore >= 50) grade = 'C';
+                else if (finalScore >= 35) grade = 'D';
+
+                const cell = row.querySelector('.final-grade-cell');
+                cell.textContent = grade;
+                cell.style.color = grade === 'A' ? '#10b981' : grade === 'E' ? '#ef4444' : '#333';
+                cell.title = `Score: ${finalScore.toFixed(1)}%`;
+
+            } else {
+                // Old System Calculation
+                const bot = parseInt(row.querySelector('.bot').value) || 0;
+                const mot = parseInt(row.querySelector('.mot').value) || 0;
+                const eot = parseInt(row.querySelector('.eot').value) || 0;
+                const total = bot + mot + eot;
+
+                row.querySelector('.total-cell').textContent = total;
+
+                let grade = 'F9';
+                if (total >= 85) grade = 'D1';
+                else if (total >= 80) grade = 'D2';
+                else if (total >= 75) grade = 'C3';
+                else if (total >= 70) grade = 'C4';
+                else if (total >= 65) grade = 'C5';
+                else if (total >= 60) grade = 'C6';
+                else if (total >= 50) grade = 'P7';
+                else if (total >= 40) grade = 'P8';
+
+                const cell = row.querySelector('.grade-cell');
+                cell.textContent = grade;
+                cell.style.color = grade === 'F9' ? 'red' : grade === 'D1' ? 'green' : 'black';
+            }
+            updateStats();
+        }
+
+        function updateSaveStatus() {
+            document.getElementById('unsavedCount').textContent = unsavedChanges;
+            const btn = document.getElementById('saveMarksBtn');
+            if (unsavedChanges > 0) {
+                btn.style.opacity = '1';
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                document.getElementById('autoSaveStatus').textContent = '(Click to save)';
+            } else {
+                btn.style.opacity = '0.7';
+                document.getElementById('autoSaveStatus').textContent = 'All saved';
+            }
+        }
+
+        function updateStats() {
+            const inputs = Array.from(document.querySelectorAll('.mark-input.eot'));
+            const scores = inputs.map(i => parseInt(i.value)).filter(v => !isNaN(v));
+
+            if (scores.length === 0) {
+                document.getElementById('statAvg').textContent = '-';
+                document.getElementById('statHigh').textContent = '-';
+                document.getElementById('statLow').textContent = '-';
+                document.getElementById('statProgress').textContent = '0%';
+                return;
+            }
+
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const high = Math.max(...scores);
+            const low = Math.min(...scores);
+            const progress = (scores.length / inputs.length) * 100;
+
+            document.getElementById('statAvg').textContent = avg.toFixed(1) + (currentGradingSystem === 'new_system' ? '/100' : '/30');
+            document.getElementById('statHigh').textContent = high;
+            document.getElementById('statLow').textContent = low;
+            document.getElementById('statProgress').textContent = Math.round(progress) + '%';
+        }
+
+        // --- Save Logic ---
+        document.getElementById('saveMarksBtn').addEventListener('click', async () => {
+            const rows = document.querySelectorAll('#marksTableBody tr');
+            const marksData = [];
+
+            rows.forEach(row => {
+                const studentId = row.dataset.studentId;
+                const subjectId = document.getElementById('subjectSelect').value;
+                const term = document.getElementById('termSelect').value;
+
+                const markEntry = {
+                    student_id: parseInt(studentId),
+                    subject_id: parseInt(subjectId),
+                    term: term,
+                    year: 2026,
+                    grading_system: currentGradingSystem
+                };
+
+                if (currentGradingSystem === 'new_system') {
+                    markEntry.continuous_assessment = parseInt(row.querySelector('.ca').value) || 0;
+                    markEntry.project_work = parseInt(row.querySelector('.proj').value) || 0;
+                    markEntry.end_of_cycle_exam = parseInt(row.querySelector('.eot').value) || 0;
+                } else {
+                    const bot = parseInt(row.querySelector('.bot').value) || 0;
+                    const mot = parseInt(row.querySelector('.mot').value) || 0;
+                    const eot = parseInt(row.querySelector('.eot').value) || 0;
+                    markEntry.score = bot + mot + eot;
+                }
+
+                marksData.push(markEntry);
+            });
+
+            try {
+                const btn = document.getElementById('saveMarksBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+                const res = await fetch(`${API_URL}/marks/batch-submit`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ marks: marksData })
+                });
+
+                if (res.ok) {
+                    unsavedChanges = 0;
+                    updateSaveStatus();
+                    btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                    setTimeout(() => btn.innerHTML = '<i class="fas fa-save"></i> Save All Changes', 2000);
+                } else {
+                    const err = await res.json();
+                    alert('Error saving marks: ' + (err.message || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Connection error: ' + e.message);
+            }
+        });
+
+        // Initial Load
+        loadSubjects();
+        if (window.location.search.includes('class=')) {
+            const params = new URLSearchParams(window.location.search);
+            setTimeout(() => {
+                document.getElementById('classSelect').value = params.get('class');
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>

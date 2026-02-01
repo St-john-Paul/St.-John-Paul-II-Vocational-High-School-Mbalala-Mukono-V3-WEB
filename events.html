@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="View our school calendar and upcoming events. Stay informed about term dates, visiting days, and sports activities at St. John Paul II.">
+    <title>School Events | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-events_hero">
+            <div class="container">
+                <h1 data-field="title">School Events</h1>
+                <p data-field="subtitle">EXCITING ACTIVITIES AND IMPORTANT DATES</p>
+            </div>
+        </section>
+
+        <!-- Events Calendar View -->
+        <section style="padding: 100px 0;">
+            <div class="container">
+                <div class="section-title" style="text-align: center; margin-bottom: 60px;">
+                    <h2>Academic Calendar 2026</h2>
+                    <p style="color: var(--gray-600);">Term dates and major school activities.</p>
+                </div>
+
+                <div class="events-list" style="display: grid; gap: 40px; max-width: 900px; margin: 0 auto;">
+                    <!-- Term 1 Start -->
+                    <div
+                        style="display: flex; background: white; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;">
+                        <div
+                            style="background: var(--color-primary); color: white; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 150px;">
+                            <span style="font-size: 2.5rem; font-weight: 700;">05</span>
+                            <span style="text-transform: uppercase; font-weight: 600;">FEB</span>
+                        </div>
+                        <div style="padding: 30px;">
+                            <h3 style="margin-bottom: 10px;">Term I Reporting Day</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem;">All students (New and Old) report
+                                back for the first term of 2026. Uniform and requirement inspection at the gate.</p>
+                            <div
+                                style="margin-top: 15px; display: flex; gap: 20px; font-size: 0.85rem; color: var(--color-primary); font-weight: 700;">
+                                <span><i class="far fa-clock"></i> 08:00 AM - 05:00 PM</span>
+                                <span><i class="fas fa-map-marker-alt"></i> School Campus</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PTA Meeting -->
+                    <div
+                        style="display: flex; background: white; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;">
+                        <div
+                            style="background: var(--color-secondary); color: white; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 150px;">
+                            <span style="font-size: 2.5rem; font-weight: 700;">18</span>
+                            <span style="text-transform: uppercase; font-weight: 600;">MAR</span>
+                        </div>
+                        <div style="padding: 30px;">
+                            <h3 style="margin-bottom: 10px;">Annual General PTA Meeting</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem;">Discussion of school developments,
+                                academic targets for the year, and election of new PTA committee members.</p>
+                            <div
+                                style="margin-top: 15px; display: flex; gap: 20px; font-size: 0.85rem; color: var(--color-primary); font-weight: 700;">
+                                <span><i class="far fa-clock"></i> 10:00 AM</span>
+                                <span><i class="fas fa-university"></i> Main Hall</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visiting Day -->
+                    <div
+                        style="display: flex; background: white; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden;">
+                        <div
+                            style="background: var(--color-accent); color: white; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 150px;">
+                            <span style="font-size: 2.5rem; font-weight: 700;">29</span>
+                            <span style="text-transform: uppercase; font-weight: 600;">MAR</span>
+                        </div>
+                        <div style="padding: 30px;">
+                            <h3 style="margin-bottom: 10px;">Term I Visiting Day</h3>
+                            <p style="color: var(--gray-600); font-size: 0.95rem;">Parents interact with class teachers
+                                and wardens regarding student performance and welfare. No outside cooked food.</p>
+                            <div
+                                style="margin-top: 15px; display: flex; gap: 20px; font-size: 0.85rem; color: var(--color-primary); font-weight: 700;">
+                                <span><i class="far fa-clock"></i> 10:00 AM - 05:00 PM</span>
+                                <span><i class="fas fa-users"></i> Campus Fields</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section style="padding: 80px 0; background: var(--gray-50); text-align: center;">
+            <div class="container">
+                <h2 style="margin-bottom: 25px;">Download Full Calendar</h2>
+                <p
+                    style="color: var(--gray-600); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Get the complete academic calendar for 2026 including exam dates, holidays, and co-curricular weeks.
+                </p>
+                <a href="#" class="btn btn-primary" style="padding: 15px 40px;"><i class="fas fa-download"></i> Download
+                    PDF Calendar</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch(`${API_URL}/content/sections`)
+                .then(res => res.json())
+                .then(sections => {
+                    sections.forEach(s => {
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+                })
+                .catch(e => console.error(e));
+        });
+    </script>
+</body>
+
+</html>

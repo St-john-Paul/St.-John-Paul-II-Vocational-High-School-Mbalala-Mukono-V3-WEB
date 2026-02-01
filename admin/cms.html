@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Dashboard | SMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .post-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="/src/admin.css">
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class="active"><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class=""><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <h2 style="margin-bottom: 30px;">Content Management</h2>
+
+        <div class="form-card">
+            <h3>Post New Content</h3>
+            <form id="cmsForm">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 2;">
+                        <label>Title</label>
+                        <input type="text" name="title" required placeholder="Article Headline">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Category</label>
+                        <select name="category">
+                            <option value="News">News</option>
+                            <option value="Event">Event</option>
+                            <option value="Announcement">Announcement</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>Content</label>
+                <textarea name="content" rows="4" required placeholder="Write your content here..."></textarea>
+
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Event Date (If Event)</label>
+                        <input type="date" name="event_date">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Post Image</label>
+                    <input type="file" name="image" accept="image/*" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Publish Post</button>
+            </form>
+        </div>
+
+        <h3>Recent Posts</h3>
+        <div id="postsList" class="post-list">
+            <!-- Posts will load here -->
+            <div style="text-align: center; padding: 20px;">Loading posts...</div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Edit Post Modal -->
+    <div id="editPostModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h3
+                style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: var(--color-primary);">
+                Edit Post</h3>
+            <form id="editPostForm">
+                <input type="hidden" name="id" id="editPostId">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 2;">
+                        <label>Title</label>
+                        <input type="text" name="title" id="editTitle" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Category</label>
+                        <select name="category" id="editCategory">
+                            <option value="News">News</option>
+                            <option value="Event">Event</option>
+                            <option value="Announcement">Announcement</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>Content</label>
+                <textarea name="content" id="editContent" rows="4" required></textarea>
+
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label>Event Date (If Event)</label>
+                        <input type="date" name="event_date" id="editEventDate">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Post Image (Leave blank to keep current)</label>
+                    <input type="file" name="image" accept="image/*" class="form-control">
+                    <div style="text-align: center; margin: 5px 0;">- OR -</div>
+                    <input type="url" name="image_url_input" id="editImageUrl"
+                        placeholder="Paste image link here (https://...)">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Update Post</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, BASE_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+        import { optimizeImage } from '/src/utils/imageOptimizer.js';
+
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'admin' && user.role !== 'staff')) window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        // Headers for GET/DELETE (JSON/Auth) - POST will use FormData (no Content-Type header needed)
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        async function loadPosts() {
+            try {
+                const res = await fetch(`${API_URL}/cms`);
+                const posts = await res.json();
+
+                const container = document.getElementById('postsList');
+                container.innerHTML = '';
+
+                if (posts.length === 0) {
+                    container.innerHTML = '<p>No posts found.</p>';
+                    return;
+                }
+
+                if (!window.postsData) window.postsData = {};
+
+                posts.forEach(post => {
+                    window.postsData[post.id] = post;
+                    const date = new Date(post.createdAt).toLocaleDateString();
+                    container.innerHTML += `
+                        <div class="post-card">
+                            <div>
+                                <div class="post-meta">
+                                    <span class="badge" style="background:#eee; padding:2px 6px; border-radius:4px; margin-right:8px;">${post.category}</span>
+                                    ${date}
+                                </div>
+                                <h4 style="margin: 0 0 5px 0;">${post.title}</h4>
+                                <p style="margin: 0; color: #555; font-size: 0.9rem;">${post.content.substring(0, 100)}...</p>
+                                ${post.image_url ? `<img src="${getImageUrl(post.image_url)}" style="max-height:100px; margin-top:10px; border-radius:4px;">` : ''}
+                            </div>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="openEditModal(${post.id})" class="btn btn-sm" style="color: blue; border: 1px solid blue; background: white;">Edit</button>
+                                <button onclick="deletePost(${post.id})" class="btn btn-sm" style="color: red; border: 1px solid red; background: white;">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        window.deletePost = async (id) => {
+            if (!confirm('Delete this post?')) return;
+            try {
+                const res = await fetch(`${API_URL}/cms/${id}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (res.ok) loadPosts();
+            } catch (e) { console.error(e); }
+        };
+
+        document.getElementById('cmsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            // OPTIMIZE IMAGE
+            const fileInput = e.target.querySelector('input[name="image"]');
+            if (fileInput && fileInput.files.length > 0) {
+                try {
+                    const optimizedFile = await optimizeImage(fileInput.files[0]);
+                    formData.set('image', optimizedFile);
+                } catch (err) {
+                    console.warn('Optimization failed, uploading original:', err);
+                }
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/cms`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Post published successfully!');
+                    e.target.reset();
+                    loadPosts();
+                } else {
+                    const err = await res.json();
+                    alert(err.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error processing request');
+            }
+        });
+
+        document.getElementById('editPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editPostId').value;
+            const formData = new FormData(e.target);
+
+            // OPTIMIZE IMAGE
+            const fileInput = e.target.querySelector('input[name="image"]');
+            if (fileInput && fileInput.files.length > 0) {
+                try {
+                    const optimizedFile = await optimizeImage(fileInput.files[0]);
+                    formData.set('image', optimizedFile);
+                } catch (err) {
+                    console.warn('Optimization failed, uploading original:', err);
+                }
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/cms/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Post updated successfully!');
+                    closeEditModal();
+                    loadPosts();
+                } else {
+                    const err = await res.json();
+                    alert(err.message || 'Failed to update');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error processing request');
+            }
+        });
+
+        window.openEditModal = (id) => {
+            const post = window.postsData[id];
+            if (!post) return;
+
+            document.getElementById('editPostId').value = post.id;
+            document.getElementById('editTitle').value = post.title;
+            document.getElementById('editCategory').value = post.category;
+            document.getElementById('editContent').value = post.content;
+            document.getElementById('editEventDate').value = post.event_date ? post.event_date.split('T')[0] : '';
+
+            document.querySelector('#editPostForm input[name="image"]').value = '';
+            document.getElementById('editImageUrl').value = '';
+
+            document.getElementById('editPostModal').style.display = 'flex';
+        };
+
+        window.closeEditModal = () => {
+            document.getElementById('editPostModal').style.display = 'none';
+        };
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('editPostModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        loadPosts();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

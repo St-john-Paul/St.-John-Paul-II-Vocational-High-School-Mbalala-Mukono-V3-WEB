@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Stay updated with the latest news, announcements, and success stories from St. John Paul II Vocational & High School Mbalala-Mukono.">
+    <title>News & Updates | St. John Paul II Vocational & High School</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <nav class="navbar scrolled"></nav>
+
+    <main>
+        <section class="page-hero" id="section-news_hero">
+            <div class="container">
+                <h1 data-field="title">News & Updates</h1>
+                <p data-field="subtitle">STAY INFORMED WITH OUR LATEST STORIES</p>
+            </div>
+        </section>
+
+        <!-- Featured News -->
+        <section style="padding: 100px 0;">
+            <div class="container">
+                <div id="newsGrid" class="news-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--color-primary);"></i>
+                        <p>Loading latest news...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manageable News Sections -->
+        <script type="module">
+            import { API_URL, getImageUrl } from '/src/config.js';
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                const container = document.getElementById('newsGrid');
+                try {
+                    const res = await fetch(`${API_URL}/content/sections`);
+                    const allSections = await res.json();
+
+                    const newsData = {};
+                    allSections.forEach(s => {
+                        newsData[s.section_key] = s;
+
+                        // Handle standard section elements
+                        const el = document.getElementById(`section-${s.section_key}`);
+                        if (el) {
+                            if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                            if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                            if (s.image_url) {
+                                const bgUrl = getImageUrl(s.image_url);
+                                el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                            }
+                        }
+                    });
+
+                    container.innerHTML = '';
+
+                    // Get featured section
+                    const featured = newsData['news_featured'];
+                    if (featured) {
+                        const fImg = getImageUrl(featured.image_url);
+
+                        let html = `
+                             <article style="background: white; border-radius: 20px; box-shadow: var(--shadow-xl); overflow: hidden;">
+                                <img src="${fImg}" style="width: 100%; height: 350px; border-radius: 20px 20px 0 0; object-fit: cover;">
+                                <div style="padding: 40px;">
+                                    <span style="background: var(--color-primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${featured.subtitle || 'ACADEMIC'}</span>
+                                    <h2 style="margin: 20px 0; font-size: 1.8rem;">${featured.title}</h2>
+                                    <p style="color: var(--gray-600); line-height: 1.8; margin-bottom: 25px;">${featured.content || ''}</p>
+                                    ${featured.button_text ? `<a href="${featured.button_link || '#'}" style="color: var(--color-primary); font-weight: 700;">${featured.button_text} <i class="fas fa-arrow-right"></i></a>` : `<span style="color: var(--color-primary); font-weight: 700; cursor: pointer;">Read More <i class="fas fa-arrow-right"></i></span>`}
+                                </div>
+                            </article>
+                            <div style="display: grid; gap: 20px; align-content: start;">
+                        `;
+
+                        // Display side items
+                        ['news_side_1', 'news_side_2', 'news_side_3'].forEach(key => {
+                            const side = newsData[key];
+                            if (side && side.title) {
+                                const sImg = getImageUrl(side.image_url);
+                                html += `
+                                    <article style="display: flex; gap: 20px; background: white; padding: 15px; border-radius: 12px; box-shadow: var(--shadow-sm); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                        <img src="${sImg}" style="width: 120px; height: 100px; border-radius: 8px; object-fit: cover;">
+                                        <div style="flex: 1;">
+                                            <span style="font-size: 0.75rem; color: var(--color-primary); font-weight: 700;">${side.subtitle || ''}</span>
+                                            <h4 style="margin: 5px 0; font-size: 1rem;">${side.title}</h4>
+                                            <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 0;">${side.content ? side.content.substring(0, 80) + '...' : ''}</p>
+                                        </div>
+                                    </article>
+                                 `;
+                            }
+                        });
+
+                        html += `</div>`;
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">News content not found. Please sync sections.</p>';
+                    }
+                } catch (error) {
+                    console.error('Failed to load news:', error);
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Error loading news items.</p>';
+                }
+            });
+
+            // Newsletter Submission
+            const newsForm = document.getElementById('newsletterForm');
+            if (newsForm) {
+                newsForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = newsForm.querySelector('input[name="email"]').value;
+                    try {
+                        const res = await fetch(`${API_URL}/content/newsletter/subscribe`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email })
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                            alert('Subscribed successfully!');
+                            newsForm.reset();
+                        } else {
+                            alert(data.message || 'Subscription failed');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Error connecting to server');
+                    }
+                });
+            }
+        </script>
+
+        <!-- Newsletter CTA -->
+        <section style="padding: 80px 0; background: var(--gray-50); text-align: center;">
+            <div class="container">
+                <h2 style="margin-bottom: 20px;">Never Miss An Update</h2>
+                <p style="color: var(--gray-600); margin-bottom: 35px;">Subscribe to our newsletter to receive termly
+                    circulars and school news directly in your inbox.</p>
+                <form id="newsletterForm" style="display: flex; max-width: 500px; margin: 0 auto; gap: 10px;">
+                    <input type="email" name="email" required placeholder="Enter your email"
+                        style="flex: 1; padding: 15px; border-radius: 8px; border: 1px solid var(--gray-300);">
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

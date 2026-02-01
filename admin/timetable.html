@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Timetable | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <link rel="stylesheet" href="/src/admin.css">
+    <style>
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+
+<body class="admin-page">
+    <button id="mobileToggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="/logo.png" alt="Logo">
+            <h3>St. John Paul II<br>Admin Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-label">Main</div>
+            <a href="/admin/dashboard.html" class=""><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/admin/analytics.html" class=""><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="/admin/communication.html" class=""><i class="fas fa-comments"></i> Communication</a>
+            <a href="/admin/students.html" class=""><i class="fas fa-user-graduate"></i> Students</a>
+            <a href="/admin/staff.html" class=""><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+            <a href="/admin/academics.html" class=""><i class="fas fa-book"></i> Academics</a>
+            <a href="/admin/allocations.html" class=""><i class="fas fa-th"></i> Allocations</a>
+            <a href="/admin/finance.html" class=""><i class="fas fa-coins"></i> Finance</a>
+            <a href="/admin/results.html" class=""><i class="fas fa-chart-line"></i> Results</a>
+
+            <div class="sidebar-label">Content</div>
+            <a href="/admin/sections.html" class=""><i class="fas fa-layer-group"></i> Page Sections</a>
+            <a href="/admin/cms.html" class=""><i class="fas fa-newspaper"></i> News & Events</a>
+            <a href="/admin/gallery.html" class=""><i class="fas fa-images"></i> Gallery</a>
+            <a href="/admin/leadership.html" class=""><i class="fas fa-users"></i> Leadership</a>
+            <a href="/admin/testimonials.html" class=""><i class="fas fa-quote-left"></i> Testimonials</a>
+            <a href="/admin/subscribers.html" class=""><i class="fas fa-envelope"></i> Newsletter</a>
+            <a href="/admin/inquiries.html" class=""><i class="fas fa-question-circle"></i> Inquiries</a>
+            <a href="/admin/calendar.html" class=""><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="/admin/timetable.html" class="active"><i class="fas fa-clock"></i> Timetable</a>
+            <a href="/admin/documents.html" class=""><i class="fas fa-file-pdf"></i> Documents</a>
+            <a href="/admin/faqs.html" class=""><i class="fas fa-question"></i> FAQs</a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/admin/settings.html" class=""><i class="fas fa-cog"></i> Settings</a>
+            <a href="/admin/logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main-content">
+        <header class="admin-header"
+            style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0; color: #8B0000; font-size: 1.8rem;">Manage Timetables</h2>
+                <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">Configure Daily Routines and Class Schedules
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="switchTab('routine')" id="tab-routine" class="btn"
+                    style="background: white; color: #8B0000; border: 2px solid #8B0000; font-weight: 600;">Daily
+                    Routine</button>
+                <button onclick="switchTab('class')" id="tab-class" class="btn"
+                    style="background: white; color: #8B0000; border: 2px solid #8B0000; font-weight: 600;">Class
+                    Timetable</button>
+            </div>
+        </header>
+
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="tableTitle" style="color: #8B0000; margin: 0; font-weight: 700;">Daily Routine</h3>
+            <button class="btn btn-primary" onclick="openModal()"
+                style="padding: 10px 20px; font-size: 1rem; border-radius: 8px; background: #8B0000; color: white; border: none; cursor: pointer; font-weight: 600; box-shadow: 0 2px 6px rgba(139,0,0,0.3);">
+                <i class="fas fa-plus"></i> Add Entry
+            </button>
+        </div>
+
+        <!-- Filters for Class Timetable -->
+        <div id="classFilters" style="display: none; margin-bottom: 20px;">
+            <label style="font-weight: 600; color: #8B0000; margin-right: 10px;">Select Class/Program:</label>
+            <select id="filterClass" onchange="loadTimetable()"
+                style="padding: 12px 20px; border: 2px solid #8B0000; border-radius: 8px; font-weight: 500; min-width: 250px;">
+                <option value="">-- Choose a class or program --</option>
+                <optgroup label="O-Level & A-Level">
+                    <option value="S.1">Senior One (S.1)</option>
+                    <option value="S.2">Senior Two (S.2)</option>
+                    <option value="S.3">Senior Three (S.3)</option>
+                    <option value="S.4">Senior Four (S.4)</option>
+                    <option value="S.5">Senior Five (S.5)</option>
+                    <option value="S.6">Senior Six (S.6)</option>
+                </optgroup>
+                <optgroup label="Vocational Programs">
+                    <option value="Tailoring & Fashion Design">Tailoring & Fashion Design</option>
+                    <option value="Carpentry & Joinery">Carpentry & Joinery</option>
+                    <option value="Electrical Installation">Electrical Installation</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Catering & Hotel Management">Catering & Hotel Management</option>
+                    <option value="Computer Maintenance">Computer Maintenance</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div style="background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden;">
+            <div style="max-height: calc(100vh - 350px); overflow-y: auto;">
+                <table class="table" style="background: white; width: 100%; border-collapse: collapse;">
+                    <thead style="position: sticky; top: 0; background: #f8f9fa; z-index: 10;">
+                        <tr style="text-align: left;">
+                            <th
+                                style="padding: 15px; color: #8B0000; border-bottom: 2px solid #dee2e6; font-weight: 700;">
+                                Time</th>
+                            <th
+                                style="padding: 15px; color: #8B0000; border-bottom: 2px solid #dee2e6; font-weight: 700;">
+                                Details</th>
+                            <th
+                                style="padding: 15px; color: #8B0000; border-bottom: 2px solid #dee2e6; font-weight: 700;">
+                                Target</th>
+                            <th
+                                style="padding: 15px; color: #8B0000; border-bottom: 2px solid #dee2e6; font-weight: 700;">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetableList">
+                        <tr>
+                            <td colspan="4" style="padding: 40px; text-align: center; color: #999;">
+                                <i class="fas fa-clock"
+                                    style="font-size: 3rem; opacity: 0.2; display: block; margin-bottom: 10px;"></i>
+                                Loading timetable data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Timetable Modal -->
+    <div id="addTimetableModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; border-top: 5px solid #8B0000;">
+            <span class="close-modal" onclick="closeModal()"
+                style="color: white; font-size: 1.8rem; font-weight: bold;">&times;</span>
+
+            <!-- Modal Header with Gradient -->
+            <div
+                style="background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; padding: 20px; margin: -30px -30px 25px -30px; border-radius: 12px 12px 0 0;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 600;">
+                    <i class="fas fa-clock" style="color: #FFA500;"></i> Add Routine Entry
+                </h3>
+                <p style="margin: 8px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Define a new daily
+                    routine activity
+                </p>
+            </div>
+
+            <form id="addTimetableForm">
+                <input type="hidden" name="type" id="entryType" value="routine">
+
+                <!-- Dynamic Fields Container -->
+                <div id="routineFields">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">
+                            <i class="fas fa-tag"></i> Activity Name
+                        </label>
+                        <input type="text" name="activity_name" placeholder="Morning Prep, Breakfast..."
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div id="classFields" style="display: none;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Day</label>
+                            <select name="day"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Class</label>
+                            <select name="class_level"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <optgroup label="O-Level & A-Level">
+                                    <option value="S.1">S.1</option>
+                                    <option value="S.2">S.2</option>
+                                    <option value="S.3">S.3</option>
+                                    <option value="S.4">S.4</option>
+                                    <option value="S.5">S.5</option>
+                                    <option value="S.6">S.6</option>
+                                </optgroup>
+                                <optgroup label="Vocational Programs">
+                                    <option value="Tailoring & Fashion Design">Tailoring & Fashion
+                                        Design</option>
+                                    <option value="Carpentry & Joinery">Carpentry & Joinery</option>
+                                    <option value="Electrical Installation">Electrical Installation
+                                    </option>
+                                    <option value="Plumbing">Plumbing</option>
+                                    <option value="Catering & Hotel Management">Catering & Hotel
+                                        Management</option>
+                                    <option value="Computer Maintenance">Computer Maintenance</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label
+                            style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Subject</label>
+                        <input type="text" name="subject" placeholder="e.g. Mathematics"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <!-- Time Range -->
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Start
+                            Time</label>
+                        <input type="time" name="start_time" required
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">End
+                            Time</label>
+                        <input type="time" name="end_time" required
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div id="routineMeta" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Applies
+                            To</label>
+                        <select name="applies_to"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: white;">
+                            <option value="all">Everyone</option>
+                            <option value="boarders">Boarders Only</option>
+                            <option value="day-scholars">Day Scholars Only</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label
+                            style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Order</label>
+                        <input type="number" name="display_order" value="0"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(139, 0, 0, 0.4)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 0, 0, 0.3)'">
+                    <i class="fas fa-plus-circle" style="color: #FFA500;"></i> Save Entry
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Timetable Modal -->
+    <div id="editTimetableModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; border-top: 5px solid #8B0000;">
+            <span class="close-modal" onclick="closeEditModal()" style="color: black; font-size: 1.8rem;">&times;</span>
+            <div
+                style="background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; padding: 20px; margin: -30px -30px 25px -30px; border-radius: 12px 12px 0 0;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 600;">
+                    <i class="fas fa-edit" style="color: #FFA500;"></i> Edit Entry
+                </h3>
+            </div>
+            <form id="editTimetableForm">
+                <input type="hidden" name="id" id="editEntryId">
+                <input type="hidden" name="type" id="editEntryType"> <!-- To track routine vs class -->
+
+                <!-- Routine Specific -->
+                <div id="editRoutineBlock" style="display: none;">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Activity
+                            Name</label>
+                        <input type="text" name="activity_name" id="editActivityName"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Applies
+                                To</label>
+                            <select name="applies_to" id="editAppliesTo"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <option value="all">Everyone</option>
+                                <option value="boarders">Boarders Only</option>
+                                <option value="day-scholars">Day Scholars Only</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Order</label>
+                            <input type="number" name="display_order" id="editDisplayOrder"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Specific -->
+                <div id="editClassBlock" style="display: none;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Day</label>
+                            <select name="day" id="editDay"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label
+                                style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Class</label>
+                            <select name="class_level" id="editClassLevel"
+                                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <optgroup label="O-Level & A-Level">
+                                    <option value="S.1">S.1</option>
+                                    <option value="S.2">S.2</option>
+                                    <option value="S.3">S.3</option>
+                                    <option value="S.4">S.4</option>
+                                    <option value="S.5">S.5</option>
+                                    <option value="S.6">S.6</option>
+                                </optgroup>
+                                <optgroup label="Vocational Programs">
+                                    <option value="Tailoring & Fashion Design">Tailoring & Fashion
+                                        Design</option>
+                                    <option value="Carpentry & Joinery">Carpentry & Joinery</option>
+                                    <option value="Electrical Installation">Electrical Installation
+                                    </option>
+                                    <option value="Plumbing">Plumbing</option>
+                                    <option value="Catering & Hotel Management">Catering & Hotel
+                                        Management</option>
+                                    <option value="Computer Maintenance">Computer Maintenance</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label
+                            style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Subject</label>
+                        <input type="text" name="subject" id="editSubject"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <!-- Common Time -->
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">Start
+                            Time</label>
+                        <input type="time" name="start_time" id="editStartTime" required
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #8B0000;">End
+                            Time</label>
+                        <input type="time" name="end_time" id="editEndTime" required
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <button type="submit"
+                    style="width: 100%; padding: 14px; background: linear-gradient(135deg, #8B0000 0%, #a52a2a 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-save" style="color: #FFA500;"></i> Update Entry
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+        import { getCurrentUser } from '/src/utils/auth.js';
+
+        const user = getCurrentUser();
+        if (!user || user.role !== 'admin') window.location.href = '/login.html';
+
+        const token = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        let currentType = 'routine';
+
+        // Initialize
+        window.switchTab = (type) => {
+            currentType = type;
+            document.getElementById('entryType').value = type;
+
+            // Toggle Tabs with improved styling
+            const routineTab = document.getElementById('tab-routine');
+            const classTab = document.getElementById('tab-class');
+
+            if (type === 'routine') {
+                routineTab.style.background = '#8B0000';
+                routineTab.style.color = 'white';
+                routineTab.style.boxShadow = 'none';
+                classTab.style.background = 'white';
+                classTab.style.color = '#8B0000';
+                classTab.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            } else {
+                classTab.style.background = '#8B0000';
+                classTab.style.color = 'white';
+                classTab.style.boxShadow = 'none';
+                routineTab.style.background = 'white';
+                routineTab.style.color = '#8B0000';
+                routineTab.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            }
+
+            // Toggle Filters & UI Lists
+            const isRoutine = type === 'routine';
+            document.getElementById('classFilters').style.display = isRoutine ? 'none' : 'flex';
+            document.getElementById('tableTitle').textContent = isRoutine ? 'Daily Routine' : 'Class Timetable';
+
+            // Toggle Modal Fields
+            document.getElementById('routineFields').style.display = isRoutine ? 'block' : 'none';
+            document.getElementById('routineMeta').style.display = isRoutine ? 'flex' : 'none';
+            document.getElementById('classFields').style.display = isRoutine ? 'none' : 'block';
+
+            loadTimetable();
+        };
+
+        window.openModal = () => {
+            document.getElementById('addTimetableModal').style.display = 'flex';
+            // Ensure fields are correct based on currentType (already handled by switchTab logic mostly, but good to double check on open if needed)
+        };
+
+        window.closeModal = () => document.getElementById('addTimetableModal').style.display = 'none';
+
+        window.loadTimetable = async () => {
+            try {
+                let url = `${API_URL}/content/timetable?type=${currentType}`;
+                if (currentType === 'class') {
+                    const classLevel = document.getElementById('filterClass').value;
+                    if (classLevel) {
+                        // Properly encode the class level to handle special characters like &
+                        url += `&class_level=${encodeURIComponent(classLevel)}`;
+                    }
+                }
+
+                const res = await fetch(url);
+                const entries = await res.json();
+                const tbody = document.getElementById('timetableList');
+                tbody.innerHTML = '';
+
+                if (!window.timetableData) window.timetableData = {};
+
+                if (entries.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center;">No entries found.</td></tr>';
+                    return;
+                }
+
+                entries.forEach(entry => {
+                    window.timetableData[entry.id] = entry;
+                    let details, target;
+
+                    if (currentType === 'routine') {
+                        details = `<strong>${entry.activity_name}</strong>`;
+                        target = `<span class="badge" style="background: #eef2ff; color: #4338ca;">${entry.applies_to}</span>`;
+                    } else {
+                        details = `<strong>${entry.subject}</strong><br><span style="font-size: 0.85em; color: #666;">${entry.day}</span>`;
+                        target = `<span class="badge" style="background: #eef2ff; color: #4338ca;">${entry.class_level}</span>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;">${entry.start_time} - ${entry.end_time}</td>
+                            <td style="padding: 15px;">${details}</td>
+                            <td style="padding: 15px;">${target}</td>
+                            <td style="padding: 15px;">
+                                <button onclick="openEditModal(${entry.id})" style="background: none; border: none; color: blue; cursor: pointer; margin-right: 10px;"><i class="fas fa-edit"></i></button>
+                                <button onclick="deleteEntry(${entry.id})" style="background: none; border: none; color: #dc3545; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        };
+
+        window.deleteEntry = async (id) => {
+            if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) return;
+            try {
+                const res = await fetch(`${API_URL}/content/timetable/${id}`, { method: 'DELETE', headers });
+                if (res.ok) {
+                    alert('Entry deleted successfully!');
+                    loadTimetable();
+                } else {
+                    const error = await res.json();
+                    alert('Failed to delete entry: ' + (error.message || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting entry. Please try again.');
+            }
+        };
+
+        document.getElementById('addTimetableForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/content/timetable`, {
+                    method: 'POST', headers, body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert('Entry saved!');
+                    closeModal();
+                    e.target.reset();
+                    // Reset type hidden input back to current as reset clears it
+                    document.getElementById('entryType').value = currentType;
+                    loadTimetable();
+                } else {
+                    alert('Failed to save entry');
+                }
+            } catch (e) { console.error(e); }
+        });
+
+        document.getElementById('editTimetableForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editEntryId').value;
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/content/timetable/${id}`, {
+                    method: 'PUT', headers, body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert('Entry updated!');
+                    closeEditModal();
+                    loadTimetable();
+                } else {
+                    alert('Failed to update entry');
+                }
+            } catch (e) { console.error(e); }
+        });
+
+        window.openEditModal = (id) => {
+            const entry = window.timetableData[id];
+            if (!entry) return;
+
+            document.getElementById('editEntryId').value = entry.id;
+            document.getElementById('editEntryType').value = entry.type || currentType;
+            document.getElementById('editStartTime').value = entry.start_time;
+            document.getElementById('editEndTime').value = entry.end_time;
+
+            const isRoutine = (entry.type || currentType) === 'routine';
+            document.getElementById('editRoutineBlock').style.display = isRoutine ? 'block' : 'none';
+            document.getElementById('editClassBlock').style.display = isRoutine ? 'none' : 'block';
+
+            if (isRoutine) {
+                document.getElementById('editActivityName').value = entry.activity_name || '';
+                document.getElementById('editAppliesTo').value = entry.applies_to || 'all';
+                document.getElementById('editDisplayOrder').value = entry.display_order || 0;
+            } else {
+                document.getElementById('editDay').value = entry.day || 'Monday';
+                document.getElementById('editClassLevel').value = entry.class_level || 'S.1';
+                document.getElementById('editSubject').value = entry.subject || '';
+            }
+
+            document.getElementById('editTimetableModal').style.display = 'flex';
+        };
+
+        window.closeEditModal = () => {
+            document.getElementById('editTimetableModal').style.display = 'none';
+        };
+
+        window.onclick = function (event) {
+            const editModal = document.getElementById('editTimetableModal');
+            const addModal = document.getElementById('addTimetableModal');
+            if (event.target == editModal) editModal.style.display = "none";
+            if (event.target == addModal) addModal.style.display = "none";
+        }
+
+        loadTimetable();
+    </script>
+    <script src="/src/admin.js"></script>
+</body>
+
+</html>

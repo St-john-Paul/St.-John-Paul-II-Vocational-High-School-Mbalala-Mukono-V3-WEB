@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="view-transition" content="same-origin">
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | St. John Paul II Vocational & High School</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        .faq-section {
+            padding: 80px 0;
+            background: #fff;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            /* Base border, will be overridden by nth-child */
+            border-top: 5px solid #FFA500;
+            margin-bottom: 25px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Rotating Border Colors: Gold -> Red -> Blue */
+        .faq-item:nth-child(3n+1) {
+            border-top-color: #FFA500;
+            /* Gold */
+        }
+
+        .faq-item:nth-child(3n+2) {
+            border-top-color: #8B0000;
+            /* Dark Red */
+        }
+
+        .faq-item:nth-child(3n+3) {
+            border-top-color: blue;
+            /* Blue */
+        }
+
+        .faq-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            /* Removing padding as container handles it */
+            cursor: pointer;
+        }
+
+        .faq-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8B0000;
+            /* Dark Red Header */
+        }
+
+        /* The Blue Circle Icon */
+        .faq-icon {
+            width: 32px;
+            height: 32px;
+            border: 2px solid blue;
+            /* Requested Blue Border */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: blue;
+            /* Requested color */
+            font-size: 0.9rem;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+            background-color: blue;
+            color: white;
+        }
+
+        .faq-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease, margin-top 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .faq-item.active .faq-body {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 20px;
+            /* Space between question and answer */
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            /* Optional internal separator */
+        }
+
+        .faq-body p {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo" style="text-decoration: none;">
+                <h2 style="color: var(--color-primary); margin: 0; font-size: 1.2rem;">St. John Paul II</h2>
+            </a>
+            <!-- Links will be injected by main.js -->
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-hero" id="section-faqs_hero">
+            <div class="container">
+                <h1 data-field="title">Frequently Asked Questions</h1>
+                <p data-field="subtitle">Find answers to common questions about admissions, academics, and school life.
+                </p>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <div class="container faq-container" id="faqList">
+                <p style="text-align: center;">Loading questions...</p>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <!-- CTA -->
+        <section style="background: var(--gray-50); padding: 60px 0; text-align: center;">
+            <div class="container">
+                <h3 style="margin-bottom: 15px;">Still have questions?</h3>
+                <p style="color: var(--gray-600); margin-bottom: 30px;">Our team is here to help you.</p>
+                <div style="display: flex; justify-content: center;">
+                    <a href="/contact.html" class="btn btn-primary animate-slide-up"
+                        style="padding: 12px 30px; font-size: 1rem; min-width: 160px; display: inline-flex; align-items: center; gap: 8px;">
+                        <span>Contact Us</span> <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"></footer>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+        import { API_URL, getImageUrl } from '/src/config.js';
+
+        async function loadFAQs() {
+            try {
+                const res = await fetch(`${API_URL}/content/faqs`);
+                const faqs = await res.json();
+                const container = document.getElementById('faqList');
+                container.innerHTML = '';
+
+                if (faqs.length === 0) {
+                    container.innerHTML = '<p style="text-align: center;">No FAQs available at the moment.</p>';
+                    return;
+                }
+
+                faqs.forEach(faq => {
+                    container.innerHTML += `
+                        <div class="faq-item">
+                            <div class="faq-header" onclick="window.toggleFAQ(this)">
+                                <h3>${faq.question}</h3>
+                                <div class="faq-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="faq-body">
+                                <p>${faq.answer.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+                document.getElementById('faqList').innerHTML = '<p style="text-align: center; color: red;">Failed to load FAQs.</p>';
+            }
+        }
+
+        window.toggleFAQ = function (header) {
+            const item = header.parentElement;
+            const isActive = item.classList.contains('active');
+
+            // Close all others
+            document.querySelectorAll('.faq-item').forEach(i => {
+                i.classList.remove('active');
+            });
+
+            // Toggle current
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        };
+
+        loadFAQs();
+
+        // Load Page Sections
+        fetch(`${API_URL}/content/sections`)
+            .then(res => res.json())
+            .then(sections => {
+                sections.forEach(s => {
+                    const el = document.getElementById(`section-${s.section_key}`);
+                    if (el) {
+                        if (s.title) el.querySelector('[data-field="title"]').textContent = s.title;
+                        if (s.subtitle) el.querySelector('[data-field="subtitle"]').textContent = s.subtitle;
+                        if (s.image_url) {
+                            const bgUrl = getImageUrl(s.image_url);
+                            el.style.background = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${bgUrl}') center/cover`;
+                        }
+                    }
+                });
+            })
+            .catch(e => console.error(e));
+    </script>
+</body>
+
+</html>
